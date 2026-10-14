@@ -1,171 +1,295 @@
-
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="light" data-palette="sage">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#101114">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f5ed">
 <link rel="manifest" href="./manifest.json">
 <title>Habit Tracker</title>
-<style>body {background: #f5f5ed !important;
-  color: #29382f !important;}
-:root {
-  --bg: #f5f5ed;
-  --card: #fffef9;
-  --text: #29382f;
-  --muted: #7b897d;
-  --accent: #78977b;
-  --accent-light: #e1ebe0;
-  --border: #e4e7dc;
-  --shadow: 0 4px 18px rgba(48, 68, 48, 0.06);
-}
-
-body {
-  background: var(--bg);
-  color: var(--text);
-}
-
-button {
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
-}
-
-button:active {
-  transform: scale(0.97);
-}
-
-.card,
-.habit-card,
-.stat-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  box-shadow: var(--shadow);
-}
-
-
-:root{--bg:#101114;--panel:#202127;--input:#292a32;--text:#f5f5f5;--muted:#a5a5ad;--accent:#8b7cff;--border:#383941}
+<style>
+:root{color-scheme:light;--bg:#f5f5ed;--panel:#fffef9;--input:#fff;--text:#29382f;--muted:#7b897d;--accent:#78977b;--accent-soft:#e1ebe0;--border:#e4e7dc;--shadow:0 5px 20px rgba(48,68,48,.06);--danger:#b45b55}
+html[data-palette="ocean"]{--accent:#5d91a0;--accent-soft:#dcecf0;--bg:#f1f6f6;--panel:#fcffff;--border:#dce8e8}
+html[data-palette="lavender"]{--accent:#9380b5;--accent-soft:#eee7f7;--bg:#f6f3f9;--panel:#fffdfd;--border:#e8e0ef}
+html[data-palette="terracotta"]{--accent:#b8785f;--accent-soft:#f5e5dc;--bg:#faf3ed;--panel:#fffdf9;--border:#eee0d5}
+html[data-theme="dark"]{color-scheme:dark;--bg:#171b18;--panel:#222923;--input:#2a332d;--text:#edf2ed;--muted:#a4b1a7;--accent:#9cbea0;--accent-soft:#304535;--border:#39443b;--shadow:0 5px 20px rgba(0,0,0,.16);--danger:#e49a90}
+html[data-theme="dark"][data-palette="ocean"]{--accent:#86b9c5;--accent-soft:#29454c}
+html[data-theme="dark"][data-palette="lavender"]{--accent:#b6a3d8;--accent-soft:#40364f}
+html[data-theme="dark"][data-palette="terracotta"]{--accent:#d49a7f;--accent-soft:#4b352b}
 *{box-sizing:border-box}
-body{margin:0;padding:20px 16px 100px;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+html{min-height:100%;background:var(--bg);transition:background .2s,color .2s}
+body{margin:0;padding:22px 16px calc(100px + env(safe-area-inset-bottom));background:var(--bg);color:var(--text);font-family:ui-rounded,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;transition:background .2s,color .2s}
 main{max-width:650px;margin:auto}
-h1{font-size:29px;margin:8px 0}
-h2{font-size:21px}
-p{color:var(--muted);line-height:1.5}
-button,input,select{font:inherit;border:0;border-radius:10px;padding:12px}
-button{background:var(--accent);color:white;cursor:pointer;touch-action:manipulation}
-input,select{min-width:0;background:var(--input);color:var(--text)}
-input:focus-visible,button:focus-visible,select:focus-visible{outline:2px solid #c4bcff;outline-offset:3px}
-.page{display:none}.page.active{display:block}
-form{display:flex;gap:8px;margin:22px 0}
-form input{flex:1;width:100%}
-.habit-list{list-style:none;padding:0}
-.habit-item{display:flex;align-items:center;gap:12px;padding:14px;margin:10px 0;background:var(--panel);border-radius:13px}
-.habit-item span{flex:1;min-width:0;overflow-wrap:anywhere}
-.habit-item.done span{text-decoration:line-through;color:var(--muted)}
-.habit-item input[type=checkbox]{appearance:auto;-webkit-appearance:auto;accent-color:var(--accent);width:26px;height:26px;min-width:26px;padding:0;margin:0;cursor:pointer}
-.delete-button{background:var(--border);padding:10px}
-.card{background:var(--panel);border-radius:14px;padding:16px;margin:12px 0}
-.big-number{font-size:30px;font-weight:bold;margin:8px 0}
-.progress-track{height:10px;background:var(--border);border-radius:20px;overflow:hidden;margin-top:12px}
-.progress-fill{height:100%;width:0;background:var(--accent);border-radius:20px}
+h1{font-size:clamp(27px,6vw,34px);letter-spacing:-.8px;margin:8px 0 4px}
+h2{font-size:20px;margin:0 0 10px}
+p{color:var(--muted);line-height:1.5;margin:8px 0}
+button,input,select{font:inherit;border:0;border-radius:12px;padding:12px}
+button{background:var(--accent);color:#fff;cursor:pointer;touch-action:manipulation;transition:transform .15s,filter .15s}
+button:active{transform:scale(.98)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+input,select{width:100%;min-width:0;background:var(--input);color:var(--text);border:1px solid var(--border)}
+.page{display:none}
+.page.active{display:block}
+.subtitle{margin-top:0;margin-bottom:22px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:22px;padding:17px;margin:13px 0;box-shadow:var(--shadow)}
+.progress-card{display:flex;align-items:center;gap:17px}
+.progress-ring{--progress:0%;width:94px;height:94px;flex:0 0 94px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--accent) var(--progress),var(--accent-soft) 0);position:relative}
+.progress-ring:before{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--panel)}
+.ring-center{position:relative;text-align:center;font-size:20px;font-weight:800}
+.ring-center small{display:block;font-size:10px;font-weight:600;color:var(--muted)}
+.progress-info{flex:1;min-width:0}
+.progress-info .big-number{font-size:24px;font-weight:800;margin:4px 0}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.big-number{font-size:28px;font-weight:800;margin:7px 0}
+.progress-track{height:9px;background:var(--accent-soft);border-radius:99px;overflow:hidden;margin-top:10px}
+.progress-fill{height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .25s ease}
+.habit-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin:20px 0 12px}
+.habit-form input{min-width:0}
+.habit-form button{padding-inline:17px}
+.habit-options{display:grid;grid-template-columns:1fr 1fr 76px;gap:8px;margin-bottom:18px}
+.habit-options select,.habit-options input{padding:10px;font-size:14px}
+.habit-list{list-style:none;padding:0;margin:0}
+.habit-item{display:flex;align-items:center;gap:11px;padding:13px;margin:10px 0;background:var(--panel);border:1px solid var(--border);border-radius:17px;box-shadow:var(--shadow);min-width:0}
+.habit-item.done{background:color-mix(in srgb,var(--accent-soft) 44%,var(--panel))}
+.habit-check{appearance:none;-webkit-appearance:none;width:25px;height:25px;min-width:25px;padding:0;margin:0;border:2px solid var(--border);border-radius:8px;background:var(--input);display:grid;place-items:center;cursor:pointer}
+.habit-check:checked{background:var(--accent);border-color:var(--accent)}
+.habit-check:checked:after{content:"✓";font-size:16px;color:white;font-weight:800}
+.habit-emoji{width:38px;height:38px;display:grid;place-items:center;border-radius:13px;background:var(--habit-soft,var(--accent-soft));font-size:21px;flex:0 0 38px}
+.habit-copy{flex:1;min-width:0}
+.habit-name{font-weight:700;overflow-wrap:anywhere}
+.habit-item.done .habit-name{text-decoration:line-through;color:var(--muted)}
+.habit-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:5px}
+.category-chip{font-size:11px;padding:4px 8px;border-radius:99px;background:var(--accent-soft);color:var(--text)}
+.delete-button{background:transparent;color:var(--muted);padding:8px;font-size:18px;min-width:36px}
+.delete-button:hover{background:var(--accent-soft)}
+.empty-message{text-align:center;padding:24px 8px;color:var(--muted)}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat-grid .card{margin:0}
 .chart{display:flex;align-items:end;justify-content:space-around;gap:8px;height:190px;padding-top:16px}
-.chart-column{display:flex;flex-direction:column;align-items:center;justify-content:end;height:100%;flex:1;gap:8px}
-.chart-bar-area{height:135px;display:flex;align-items:end;width:100%;max-width:34px;background:#2b2938;border-radius:8px;overflow:hidden}
-.chart-bar{width:100%;background:var(--accent);border-radius:8px}
+.chart-column{display:flex;flex-direction:column;align-items:center;justify-content:end;height:100%;flex:1;gap:8px;min-width:0}
+.chart-bar-area{height:135px;display:flex;align-items:end;width:100%;max-width:34px;background:var(--accent-soft);border-radius:9px;overflow:hidden}
+.chart-bar{width:100%;min-height:0;background:var(--accent);border-radius:9px 9px 0 0}
 .chart-label{font-size:12px;color:var(--muted)}
 .calendar-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.calendar-head button{width:42px;padding:8px;font-size:22px}
 .calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:16px}
-.calendar-day{aspect-ratio:1;padding:0;border-radius:8px;background:var(--panel);color:var(--text);font-size:13px}
-.calendar-day.empty{visibility:hidden}.calendar-day.selected{outline:2px solid white}.calendar-day.today{border:1px solid var(--accent)}.calendar-day.has-progress{background:#51477f}.calendar-day.complete{background:#7767db}
+.calendar-day{aspect-ratio:1;padding:0;border-radius:10px;background:var(--accent-soft);color:var(--text);font-size:13px}
+.calendar-day.empty{visibility:hidden}
+.calendar-day.selected{outline:2px solid var(--text);outline-offset:1px}
+.calendar-day.today{border:1px solid var(--accent)}
+.calendar-day.has-progress{background:color-mix(in srgb,var(--accent) 42%,var(--panel))}
+.calendar-day.complete{background:var(--accent);color:white}
 .weekday{text-align:center;font-size:12px;color:var(--muted)}
-.field{display:grid;gap:8px;margin:18px 0}.field input,.field select{width:100%}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:10;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:10px max(8px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));background:#191a20;border-top:1px solid var(--border)}
-.nav-button{background:transparent;color:var(--muted);padding:9px 2px;font-size:12px;border-radius:10px}
-.nav-button.active{background:#302b49;color:white}
-.nav-icon{display:block;font-size:20px;margin-bottom:5px}
-.empty-message{padding:18px 0;color:var(--muted)}
-@media(min-width:600px){body{padding-top:30px}.nav-button{font-size:14px}}
+.field{display:grid;gap:8px;margin:17px 0}
+.field label{font-size:14px;font-weight:650}
+.field input,.field select{width:100%}
+.settings-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--border)}
+.settings-row:last-child{border-bottom:0}
+.settings-row select{max-width:190px}
+.toggle{width:48px;height:28px;padding:3px;border-radius:99px;background:var(--border);display:flex;align-items:center;flex:0 0 48px}
+.toggle span{height:22px;width:22px;background:var(--panel);border-radius:50%;box-shadow:0 1px 3px #0002;transition:transform .2s}
+.toggle[aria-pressed="true"]{background:var(--accent)}
+.toggle[aria-pressed="true"] span{transform:translateX(20px)}
+.palette-options{display:flex;gap:10px;flex-wrap:wrap}
+.palette-button{width:42px;height:42px;border:3px solid var(--panel);outline:1px solid var(--border);padding:0;border-radius:50%;font-size:0}
+.palette-button[aria-pressed="true"]{outline:3px solid var(--text)}
+.palette-button[data-p="sage"]{background:#78977b}
+.palette-button[data-p="ocean"]{background:#5d91a0}
+.palette-button[data-p="lavender"]{background:#9380b5}
+.palette-button[data-p="terracotta"]{background:#b8785f}
+.save-button{width:100%;margin-top:5px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:10;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;padding:9px max(8px,env(safe-area-inset-right)) calc(9px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));background:color-mix(in srgb,var(--panel) 94%,transparent);backdrop-filter:blur(14px);border-top:1px solid var(--border)}
+.nav-button{background:transparent;color:var(--muted);padding:8px 2px;font-size:11px;border-radius:13px}
+.nav-button.active{background:var(--accent-soft);color:var(--text)}
+.nav-icon{display:block;font-size:20px;margin-bottom:3px}
+.profile-message{min-height:20px}
+.small-note{font-size:12px}
+.selected-habit-row{display:flex;gap:8px;align-items:center}
+.selected-habit-row span{flex:1}
+.primary-text{color:var(--text)}
+@media(min-width:600px){body{padding-top:30px}.nav-button{font-size:13px}.habit-options{grid-template-columns:1fr 1fr 90px}}
 </style>
 </head>
 <body>
 <main>
 <section id="page-habits" class="page active">
 <h1 data-i18n="habitsTitle">Мои привычки</h1>
-<p data-i18n="tagline">Маленькие действия. Регулярный прогресс.</p>
-<div class="card">
-<p data-i18n="todayProgress">Выполнено сегодня</p>
-<div class="big-number" id="todayCount">0 / 0</div>
-<div class="progress-track"><div class="progress-fill" id="todayBar"></div></div>
-<p id="todayPercent">0%</p>
+<p class="subtitle" data-i18n="tagline">Маленькие действия. Регулярный прогресс.</p>
+<div class="card progress-card">
+<div class="progress-ring" id="todayRing" role="img" aria-label="Прогресс за сегодня">
+<div class="ring-center"><span id="todayPercentRing">0%</span><small data-i18n="todayLabel">СЕГОДНЯ</small></div>
 </div>
-<form id="habitForm">
+<div class="progress-info">
+<div class="eyebrow" data-i18n="todayProgress">Выполнено сегодня</div>
+<div class="big-number" id="todayCount">0 / 0</div>
+<p id="todayMessage">Начни с одного маленького шага.</p>
+<div class="progress-track"><div class="progress-fill" id="todayBar"></div></div>
+</div>
+</div>
+<form id="habitForm" class="habit-form">
 <input id="habitInput" maxlength="80" placeholder="Новая привычка..." data-i18n-placeholder="newHabit" required>
 <button type="submit" data-i18n="add">Добавить</button>
 </form>
+<div class="habit-options">
+<select id="habitCategory" aria-label="Категория">
+<option value="study">📚 Учёба</option>
+<option value="health">💧 Здоровье</option>
+<option value="sport">🏃 Спорт</option>
+<option value="growth">🧠 Развитие</option>
+<option value="other">⭐ Другое</option>
+</select>
+<select id="habitEmoji" aria-label="Иконка привычки">
+<option>🌱</option><option>📚</option><option>🏃</option><option>💧</option><option>🧘</option><option>🎯</option><option>🧠</option><option>✍️</option><option>💪</option><option>🎨</option><option>🌙</option><option>⭐</option>
+</select>
+<input id="habitColor" type="color" value="#78977b" aria-label="Цвет привычки">
+</div>
 <ul id="habitList" class="habit-list"></ul>
-<p id="emptyHabits" class="empty-message" data-i18n="emptyHabits">Пока нет привычек. Добавь первую!</p></section>
+<div id="emptyHabits" class="empty-message" style="display:none">
+<div style="font-size:38px">🌿</div>
+<p data-i18n="emptyHabits">Пока привычек нет. Добавь первую!</p>
+</div>
+</section>
 
 <section id="page-stats" class="page">
 <h1 data-i18n="statsTitle">Статистика</h1>
-<p data-i18n="statsSubtitle">Следи за своим прогрессом.</p>
-<div class="card"><p data-i18n="weekRate">Выполнение за 7 дней</p><div class="big-number" id="weekRate">0%</div><div class="progress-track"><div class="progress-fill" id="weekBar"></div></div></div>
-<div class="card"><p data-i18n="monthRate">Выполнение за 30 дней</p><div class="big-number" id="monthRate">0%</div><div class="progress-track"><div class="progress-fill" id="monthBar"></div></div></div>
-<div class="card"><p data-i18n="weeklyChart">Результаты за последние 7 дней</p><div id="weeklyChart" class="chart"></div></div>
-<div class="card"><p data-i18n="totalDone">Всего выполнений</p><div class="big-number" id="totalDone">0</div><p data-i18n="currentStreak">Текущая серия успешных дней</p><div class="big-number" id="streak">0</div></div>
+<p class="subtitle" data-i18n="statsSubtitle">Смотри на прогресс, а не на идеальность.</p>
+<div class="stat-grid">
+<div class="card"><div class="eyebrow" data-i18n="weekRate">За 7 дней</div><div class="big-number" id="weekRate">0%</div><div class="progress-track"><div class="progress-fill" id="weekBar"></div></div></div>
+<div class="card"><div class="eyebrow" data-i18n="monthRate">За 30 дней</div><div class="big-number" id="monthRate">0%</div><div class="progress-track"><div class="progress-fill" id="monthBar"></div></div></div>
+<div class="card"><div class="eyebrow" data-i18n="totalCompleted">Всего выполнено</div><div class="big-number" id="totalDone">0</div></div>
+<div class="card"><div class="eyebrow" data-i18n="streakTitle">Серия дней</div><div class="big-number" id="streak">0 🔥</div></div>
+</div>
+<div class="card"><h2 data-i18n="weeklyChart">Последние 7 дней</h2><div id="weeklyChart" class="chart"></div></div>
 </section>
 
 <section id="page-calendar" class="page">
 <h1 data-i18n="calendarTitle">Календарь</h1>
-<p data-i18n="calendarSubtitle">Выбирай дату и смотри результаты.</p>
+<p class="subtitle" data-i18n="calendarSubtitle">История выполнения привычек.</p>
 <div class="card">
-<div class="calendar-head"><button id="prevMonth" type="button">‹</button><strong id="monthLabel"></strong><button id="nextMonth" type="button">›</button></div>
+<div class="calendar-head"><button id="prevMonth" type="button" aria-label="Предыдущий месяц">‹</button><h2 id="monthLabel"></h2><button id="nextMonth" type="button" aria-label="Следующий месяц">›</button></div>
 <div id="weekdays" class="calendar-grid"></div>
 <div id="calendarGrid" class="calendar-grid"></div>
-<p data-i18n="calendarLegend">Фиолетовый цвет означает, что привычки выполнялись.</p>
 </div>
-<div class="card"><h2 id="selectedDateTitle"></h2><div class="big-number" id="selectedDateCount">0 / 0</div><div id="selectedDateHabits"></div></div>
+<div class="card">
+<h2 id="selectedDateTitle"></h2>
+<div class="big-number" id="selectedDateCount">0 / 0</div>
+<div id="selectedDateHabits"></div>
+</div>
 </section>
 
 <section id="page-profile" class="page">
-<h1 data-i18n="profileTitle">Профиль</h1>
-<p data-i18n="profileSubtitle">Настрой приложение под себя.</p>
+<h1 data-i18n="profileTitle">Профиль и настройки</h1>
+<p class="subtitle" data-i18n="profileSubtitle">Настрой приложение под себя.</p>
 <div class="card">
-<div class="field"><label for="nickname" data-i18n="nickname">Твой никнейм</label><input id="nickname" maxlength="30" placeholder="Например, Alex" data-i18n-placeholder="nicknamePlaceholder"></div>
-<div class="field"><label for="language" data-i18n="language">Язык приложения</label><select id="language"><option value="ru">Русский</option><option value="en">English</option></select></div>
-<button id="saveProfile" type="button" data-i18n="saveProfile">Сохранить профиль</button>
-<p id="profileMessage" role="status"></p>
+<h2 data-i18n="appearance">Внешний вид</h2>
+<div class="settings-row"><span data-i18n="darkMode">Тёмная тема</span><button type="button" id="themeToggle" class="toggle" aria-pressed="false" aria-label="Переключить тему"><span></span></button></div>
+<div class="settings-row"><span data-i18n="palette">Цветовая палитра</span><span id="paletteName">Мягкий зелёный</span></div>
+<div class="palette-options">
+<button type="button" class="palette-button" data-p="sage" aria-label="Зелёная палитра" aria-pressed="true">Зелёный</button>
+<button type="button" class="palette-button" data-p="ocean" aria-label="Голубая палитра" aria-pressed="false">Голубой</button>
+<button type="button" class="palette-button" data-p="lavender" aria-label="Лавандовая палитра" aria-pressed="false">Лавандовый</button>
+<button type="button" class="palette-button" data-p="terracotta" aria-label="Терракотовая палитра" aria-pressed="false">Терракотовый</button>
 </div>
-<div class="card"><p data-i18n="yourHabits">Твои привычки</p><div class="big-number" id="profileHabitCount">0</div><p data-i18n="daysTracked">Дней с историей</p><div class="big-number" id="profileDaysCount">0</div></div>
+</div>
+<div class="card">
+<h2 data-i18n="yourProfile">Твой профиль</h2>
+<div class="field"><label for="nickname" data-i18n="nickname">Имя или никнейм</label><input id="nickname" maxlength="40" placeholder="Как тебя называть?"></div>
+<div class="field"><label for="language" data-i18n="language">Язык приложения</label><select id="language"><option value="ru">Русский</option><option value="en">English</option></select></div>
+<button type="button" id="saveProfile" class="save-button" data-i18n="save">Сохранить</button>
+<p id="profileMessage" class="profile-message"></p>
+</div>
+<div class="card">
+<h2 data-i18n="yourProgress">Твой прогресс</h2>
+<div class="settings-row"><span data-i18n="habitCount">Активных привычек</span><strong id="profileHabitCount">0</strong></div>
+<div class="settings-row"><span data-i18n="trackedDays">Дней с историей</span><strong id="profileDaysCount">0</strong></div>
+<p class="small-note" data-i18n="localData">Данные сохраняются в этом браузере на этом устройстве.</p>
+</div>
 </section>
 </main>
 
-<nav class="bottom-nav">
-<button class="nav-button active" data-page="habits"><span class="nav-icon">☑</span><span data-i18n="navHabits">Привычки</span></button>
-<button class="nav-button" data-page="stats"><span class="nav-icon">▥</span><span data-i18n="navStats">Статистика</span></button>
-<button class="nav-button" data-page="calendar"><span class="nav-icon">▦</span><span data-i18n="navCalendar">Календарь</span></button>
-<button class="nav-button" data-page="profile"><span class="nav-icon">◉</span><span data-i18n="navProfile">Профиль</span></button>
+<nav class="bottom-nav" aria-label="Основная навигация">
+<button type="button" class="nav-button active" data-page="habits"><span class="nav-icon">✓</span><span data-i18n="navHabits">Привычки</span></button>
+<button type="button" class="nav-button" data-page="stats"><span class="nav-icon">▥</span><span data-i18n="navStats">Статистика</span></button>
+<button type="button" class="nav-button" data-page="calendar"><span class="nav-icon">▦</span><span data-i18n="navCalendar">Календарь</span></button>
+<button type="button" class="nav-button" data-page="profile"><span class="nav-icon">⚙</span><span data-i18n="navProfile">Профиль</span></button>
 </nav>
 
 <script>
-const $ = id => document.getElementById(id);
-const tr = {
-ru:{
-habitsTitle:'Мои привычки',tagline:'Маленькие действия. Регулярный прогресс.',todayProgress:'Выполнено сегодня',newHabit:'Новая привычка...',add:'Добавить',emptyHabits:'Пока нет привычек. Добавь первую!',delete:'Удалить',markHabit:'Отметить: ',statsTitle:'Статистика',statsSubtitle:'Следи за своим прогрессом.',weekRate:'Выполнение за 7 дней',monthRate:'Выполнение за 30 дней',weeklyChart:'Результаты за последние 7 дней',totalDone:'Всего выполнений',currentStreak:'Текущая серия успешных дней',calendarTitle:'Календарь',calendarSubtitle:'Выбирай дату и смотри результаты.',calendarLegend:'Фиолетовый цвет означает, что привычки выполнялись.',profileTitle:'Профиль',profileSubtitle:'Настрой приложение под себя.',nickname:'Твой никнейм',nicknamePlaceholder:'Например, Alex',language:'Язык приложения',saveProfile:'Сохранить профиль',profileSaved:'Профиль сохранён!',yourHabits:'Твои привычки',daysTracked:'Дней с историей',navHabits:'Привычки',navStats:'Статистика',navCalendar:'Календарь',navProfile:'Профиль',noHabits:'Нет привычек.',noHistory:'В этот день отметок нет.',weekdays:['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],months:['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь']},
-en:{
-habitsTitle:'My Habits',tagline:'Small actions. Consistent progress.',todayProgress:'Completed today',newHabit:'New habit...',add:'Add',emptyHabits:'No habits yet.Add your first one!',delete:'Delete',markHabit:'Mark complete: ',statsTitle:'Statistics',statsSubtitle:'Track your progress.',weekRate:'Completion over 7 days',monthRate:'Completion over 30 days',weeklyChart:'Results over the last 7 days',totalDone:'Total completions',currentStreak:'Current successful-day streak',calendarTitle:'Calendar',calendarSubtitle:'Choose a date to view your results.',calendarLegend:'Purple days indicate completed habits.',profileTitle:'Profile',profileSubtitle:'Personalize your app.',nickname:'Your nickname',nicknamePlaceholder:'For example, Alex',language:'App language',saveProfile:'Save profile',profileSaved:'Profile saved!',yourHabits:'Your habits',daysTracked:'Days with history',navHabits:'Habits',navStats:'Statistics',navCalendar:'Calendar',navProfile:'Profile',noHabits:'No habits.',noHistory:'No check-ins on this day.',weekdays:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],months:['January','February','March','April','May','June','July','August','September','October','November','December']}};
-const todayKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
-const dateKey=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-const fromKey=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d)};
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const dateKey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const todayKey=()=>dateKey(new Date());
+const fromKey=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
 const shift=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
-let habits=[],history={},profile={nickname:'',language:'ru'},selectedDate=todayKey(),shownMonth=new Date();
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const read=(key,fallback)=>{try{const v=localStorage.getItem(key);return v===null?fallback:JSON.parse(v)}catch(e){return fallback}};
+const categories={
+ study:{emoji:'📚',ru:'Учёба',en:'Study'},
+ health:{emoji:'💧',ru:'Здоровье',en:'Health'},
+ sport:{emoji:'🏃',ru:'Спорт',en:'Sport'},
+ growth:{emoji:'🧠',ru:'Развитие',en:'Growth'},
+ other:{emoji:'⭐',ru:'Другое',en:'Other'}
+};
+const tr={
+ ru:{
+ habitsTitle:'Мои привычки',tagline:'Маленькие действия. Регулярный прогресс.',
+ todayLabel:'СЕГОДНЯ',todayProgress:'Выполнено сегодня',todayEmpty:'Добавь привычку, чтобы начать отслеживать прогресс.',
+ todayAll:'Всё выполнено. Отличная работа!',todaySome:'Каждый маленький шаг имеет значение.',
+ newHabit:'Новая привычка...',add:'Добавить',emptyHabits:'Пока привычек нет. Добавь первую!',
+ statsTitle:'Статистика',statsSubtitle:'Смотри на прогресс, а не на идеальность.',
+ totalCompleted:'Всего выполнено',streakTitle:'Серия дней',weeklyChart:'Последние 7 дней',
+ calendarTitle:'Календарь',calendarSubtitle:'История выполнения привычек.',
+ profileTitle:'Профиль и настройки',profileSubtitle:'Настрой приложение под себя.',
+ appearance:'Внешний вид',darkMode:'Тёмная тема',palette:'Цветовая палитра',
+ paletteNames:{sage:'Мягкий зелёный',ocean:'Спокойный голубой',lavender:'Лавандовый',terracotta:'Терракотовый'},
+ yourProfile:'Твой профиль',nickname:'Имя или никнейм',language:'Язык приложения',
+ save:'Сохранить',profileSaved:'Настройки сохранены.',yourProgress:'Твой прогресс',
+ habitCount:'Активных привычек',trackedDays:'Дней с историей',
+ localData:'Данные сохраняются в этом браузере на этом устройстве.',
+ navHabits:'Привычки',navStats:'Статистика',navCalendar:'Календарь',navProfile:'Профиль',
+ noHabits:'В этот день привычек нет.',markHabit:'Отметить привычку: ',delete:'Удалить привычку',
+ weekdays:['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],
+ months:['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь']
+ },
+ en:{
+ habitsTitle:'My habits',tagline:'Small actions. Steady progress.',
+ todayLabel:'TODAY',todayProgress:'Completed today',todayEmpty:'Add a habit to start tracking your progress.',
+ todayAll:'Everything completed. Nice work!',todaySome:'Every small step matters.',
+ newHabit:'New habit...',add:'Add',emptyHabits:'No habits yet. Add your first one!',
+ statsTitle:'Statistics',statsSubtitle:'Focus on progress, not perfection.',
+ totalCompleted:'Total completed',streakTitle:'Day streak',weeklyChart:'Last 7 days',
+ calendarTitle:'Calendar',calendarSubtitle:'Your habit completion history.',
+ profileTitle:'Profile and settings',profileSubtitle:'Make the app yours.',
+ appearance:'Appearance',darkMode:'Dark mode',palette:'Color palette',
+ paletteNames:{sage:'Soft sage',ocean:'Calm ocean',lavender:'Lavender',terracotta:'Terracotta'},
+ yourProfile:'Your profile',nickname:'Name or nickname',language:'App language',
+ save:'Save',profileSaved:'Settings saved.',yourProgress:'Your progress',
+ habitCount:'Active habits',trackedDays:'Days with history',
+ localData:'Data is saved in this browser on this device.',
+ navHabits:'Habits',navStats:'Stats',navCalendar:'Calendar',navProfile:'Profile',
+ noHabits:'No habits on this day.',markHabit:'Mark habit: ',delete:'Delete habit',
+ weekdays:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+ months:['January','February','March','April','May','June','July','August','September','October','November','December']
+ }
+};
+let habits=[],history={},profile={nickname:'',language:'ru',theme:'light',palette:'sage'};
+let shownMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
+let selectedDate=todayKey();
 
-function read(key,fallback){try{const v=JSON.parse(localStorage.getItem(key));return v==null?fallback:v}catch{return fallback}}
-function uid(){return 'h'+Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
 function load(){
+ let raw=read('ht_habits',null);
  const old=read('habits',[]);
- habits=read('ht_habits',null);
- if(!Array.isArray(habits))habits=Array.isArray(old)?old.map(h=>({id:uid(),name:h.name,active:true,created:todayKey()})):[];
- habits=habits.filter(h=>h&&typeof h.name==='string').map(h=>({id:h.id||uid(),name:h.name,active:h.active!==false,created:h.created||todayKey(),deleted:h.deleted||null}));
+ if(!Array.isArray(raw))raw=Array.isArray(old)?old:[];
+ habits=raw.map((h,i)=>({
+  id:h.id||('old'+i),
+  name:String(h.name||h.title||'Привычка'),
+  active:h.active!==false,
+  created:h.created||todayKey(),
+  deleted:h.deleted||null,
+  emoji:h.emoji||'🌱',
+  category:categories[h.category]?h.category:'other',
+  color:/^#[0-9a-f]{6}$/i.test(h.color||'')?h.color:'#78977b',
+  done:!!h.done
+ }));
  history=read('ht_history',{});
  if(!history||typeof history!=='object'||Array.isArray(history))history={};
  if(!localStorage.getItem('ht_history')&&Array.isArray(old)&&old.length){
@@ -175,69 +299,155 @@ function load(){
  profile=read('ht_profile',{nickname:'',language:'ru'});
  if(!profile||typeof profile!=='object')profile={nickname:'',language:'ru'};
  if(!['ru','en'].includes(profile.language))profile.language='ru';
+ profile.theme=profile.theme==='dark'?'dark':'light';
+ if(!['sage','ocean','lavender','terracotta'].includes(profile.palette))profile.palette='sage';
+ applyAppearance();
 }
 function save(){
  try{
- localStorage.setItem('ht_habits',JSON.stringify(habits));
- localStorage.setItem('ht_history',JSON.stringify(history));
- localStorage.setItem('ht_profile',JSON.stringify(profile));
- return true;
- }catch(e){alert('Не удалось сохранить данные. Проверь настройки браузера.');return false}
+  localStorage.setItem('ht_habits',JSON.stringify(habits));
+  localStorage.setItem('ht_history',JSON.stringify(history));
+  localStorage.setItem('ht_profile',JSON.stringify(profile));
+  return true;
+ }catch(e){
+  alert(profile.language==='ru'?'Не удалось сохранить данные. Проверь настройки браузера.':'Could not save data. Check browser settings.');
+  return false;
+ }
 }
 function t(k){return (tr[profile.language]||tr.ru)[k]}
+function applyAppearance(){
+ document.documentElement.dataset.theme=profile.theme;
+ document.documentElement.dataset.palette=profile.palette;
+ const themeMeta=document.querySelector('meta[name="theme-color"]');
+ if(themeMeta)themeMeta.content=profile.theme==='dark'?'#171b18':(profile.palette==='sage'?'#f5f5ed':profile.palette==='ocean'?'#f1f6f6':profile.palette==='lavender'?'#f6f3f9':'#faf3ed');
+ if($('themeToggle'))$('themeToggle').setAttribute('aria-pressed',String(profile.theme==='dark'));
+ document.querySelectorAll('.palette-button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.p===profile.palette)));
+ if($('paletteName'))$('paletteName').textContent=t('paletteNames')[profile.palette]||profile.palette;
+}
 function translate(){
  document.documentElement.lang=profile.language;
- document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(t(k)!==undefined)el.textContent=t(k)});
- document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{const k=el.dataset.i18nPlaceholder;if(t(k)!==undefined)el.placeholder=t(k)});
+ document.querySelectorAll('[data-i18n]').forEach(el=>{
+  const k=el.dataset.i18n;
+  if(t(k)!==undefined)el.textContent=t(k);
+ });
+ document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
+  const k=el.dataset.i18nPlaceholder;
+  if(t(k)!==undefined)el.placeholder=t(k);
+ });
  $('language').value=profile.language;
+ document.querySelectorAll('#habitCategory option').forEach(o=>{
+  const c=categories[o.value];
+  if(c)o.textContent=c.emoji+' '+c[profile.language];
+ });
+ applyAppearance();
  renderAll();
 }
 function record(date){if(!history[date])history[date]={};return history[date]}
 function activeOn(h,date){return h.created<=date&&(!h.deleted||date<h.deleted)}
 function dayStats(date){
  const relevant=habits.filter(h=>activeOn(h,date));
- const r=history[date]||{},done=relevant.filter(h=>r[h.id]===true).length;
- return {total:relevant.length,done,rate:relevant.length?Math.round(done/relevant.length*100):0};
+ const r=history[date]||{};
+ const done=relevant.filter(h=>r[h.id]===true).length;
+ return{total:relevant.length,done,rate:relevant.length?Math.round(done/relevant.length*100):0};
+}
+function hexToSoft(hex){
+ const n=parseInt(hex.slice(1),16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+ return `rgba(${r}, ${g}, ${b}, .16)`;
 }
 function renderHabits(){
- const key=todayKey(),r=record(key),ul=$('habitList');ul.innerHTML='';
+ const key=todayKey(),r=record(key),ul=$('habitList');
+ ul.innerHTML='';
  const visible=habits.filter(h=>!h.deleted);
  $('emptyHabits').style.display=visible.length?'none':'block';
  visible.forEach(h=>{
-  const li=document.createElement('li');li.className='habit-item'+(r[h.id]?' done':'');
-  const cb=document.createElement('input');cb.type='checkbox';cb.checked=r[h.id]===true;cb.setAttribute('aria-label',t('markHabit')+h.name);
-  cb.addEventListener('change',()=>{record(todayKey())[h.id]=cb.checked;save();renderAll()});
-  const span=document.createElement('span');span.textContent=h.name;
-  const del=document.createElement('button');del.type='button';del.className='delete-button';del.textContent=t('delete');
-  del.addEventListener('click',()=>{if(!confirm(profile.language==='ru'?'Удалить привычку? Прошлая история останется.':'Delete this habit? Past history will remain.'))return;h.deleted=todayKey();save();renderAll()});
-  li.append(cb,span,del);ul.append(li);
+  const li=document.createElement('li');
+  li.className='habit-item'+(r[h.id]?' done':'');
+  li.style.setProperty('--habit-soft',hexToSoft(h.color));
+  const cb=document.createElement('input');
+  cb.type='checkbox';cb.className='habit-check';cb.checked=r[h.id]===true;
+  cb.setAttribute('aria-label',t('markHabit')+h.name);
+  cb.addEventListener('change',()=>{
+   record(todayKey())[h.id]=cb.checked;save();renderAll();
+  });
+  const emoji=document.createElement('div');
+  emoji.className='habit-emoji';emoji.textContent=h.emoji||'🌱';
+  emoji.style.background=hexToSoft(h.color);
+  const copy=document.createElement('div');copy.className='habit-copy';
+  const name=document.createElement('div');name.className='habit-name';name.textContent=h.name;
+  const meta=document.createElement('div');meta.className='habit-meta';
+  const chip=document.createElement('span');chip.className='category-chip';
+  chip.textContent=(categories[h.category]||categories.other).emoji+' '+(categories[h.category]||categories.other)[profile.language];
+  chip.style.background=hexToSoft(h.color);
+  meta.append(chip);copy.append(name,meta);
+  const del=document.createElement('button');
+  del.type='button';del.className='delete-button';del.textContent='×';
+  del.setAttribute('aria-label',t('delete'));
+  del.addEventListener('click',()=>{
+   if(!confirm(profile.language==='ru'?'Удалить привычку? Прошлая история останется.':'Delete this habit? Past history will remain.'))return;
+   h.deleted=todayKey();save();renderAll();
+  });
+  li.append(cb,emoji,copy,del);ul.append(li);
  });
- const s=dayStats(key);$('todayCount').textContent=`${s.done} / ${s.total}`;$('todayBar').style.width=s.rate+'%';$('todayPercent').textContent=s.rate+'%';
+ const s=dayStats(key);
+ $('todayCount').textContent=`${s.done} / ${s.total}`;
+ $('todayBar').style.width=s.rate+'%';
+ $('todayRing').style.setProperty('--progress',s.rate+'%');
+ $('todayPercentRing').textContent=s.rate+'%';
+ $('todayMessage').textContent=!s.total?t('todayEmpty'):s.rate===100?t('todayAll'):t('todaySome');
 }
-function ratePeriod(n){let done=0,total=0;const now=fromKey(todayKey());for(let i=n-1;i>=0;i--){const s=dayStats(dateKey(shift(now,-i)));done+=s.done;total+=s.total}return total?Math.round(done/total*100):0}
-function streak(){let count=0,d=fromKey(todayKey());while(true){const s=dayStats(dateKey(d));if(!s.total||s.done!==s.total)break;count++;d=shift(d,-1)}return count}
+function ratePeriod(n){
+ let done=0,total=0;
+ const now=fromKey(todayKey());
+ for(let i=n-1;i>=0;i--){
+  const s=dayStats(dateKey(shift(now,-i)));done+=s.done;total+=s.total;
+ }
+ return total?Math.round(done/total*100):0;
+}
+function streak(){
+ let count=0,d=fromKey(todayKey());
+ while(true){
+  const s=dayStats(dateKey(d));
+  if(!s.total||s.done!==s.total)break;
+  count++;d=shift(d,-1);
+ }
+ return count;
+}
 function renderStats(){
- const w=ratePeriod(7),m=ratePeriod(30);$('weekRate').textContent=w+'%';$('weekBar').style.width=w+'%';$('monthRate').textContent=m+'%';$('monthBar').style.width=m+'%';
- let total=0;Object.values(history).forEach(r=>{total+=Object.values(r).filter(v=>v===true).length});$('totalDone').textContent=total;$('streak').textContent=streak();
- const chart=$('weeklyChart');chart.innerHTML='';const now=fromKey(todayKey());
- for(let i=6;i>=0;i--){const d=shift(now,-i),s=dayStats(dateKey(d)),col=document.createElement('div');col.className='chart-column';
- const area=document.createElement('div');area.className='chart-bar-area';const bar=document.createElement('div');bar.className='chart-bar';bar.style.height=s.rate+'%';area.append(bar);
- const label=document.createElement('span');label.className='chart-label';label.textContent=d.toLocaleDateString(profile.language==='ru'?'ru-RU':'en-US',{weekday:'short'}).replace('.','');
- col.append(area,label);chart.append(col)}
+ const w=ratePeriod(7),m=ratePeriod(30);
+ $('weekRate').textContent=w+'%';$('weekBar').style.width=w+'%';
+ $('monthRate').textContent=m+'%';$('monthBar').style.width=m+'%';
+ let total=0;
+ Object.values(history).forEach(r=>{total+=Object.values(r||{}).filter(v=>v===true).length});
+ $('totalDone').textContent=total;$('streak').textContent=streak();
+ const chart=$('weeklyChart');chart.innerHTML='';
+ const now=fromKey(todayKey());
+ for(let i=6;i>=0;i--){
+  const d=shift(now,-i),s=dayStats(dateKey(d)),col=document.createElement('div');
+  col.className='chart-column';
+  const area=document.createElement('div');area.className='chart-bar-area';
+  const bar=document.createElement('div');bar.className='chart-bar';bar.style.height=s.rate+'%';
+  area.append(bar);
+  const label=document.createElement('span');label.className='chart-label';
+  label.textContent=d.toLocaleDateString(profile.language==='ru'?'ru-RU':'en-US',{weekday:'short'}).replace('.','');
+  col.append(area,label);chart.append(col);
+ }
 }
 function renderCalendar(){
  const lang=tr[profile.language],y=shownMonth.getFullYear(),m=shownMonth.getMonth();
  $('monthLabel').textContent=lang.months[m]+' '+y;
- const wd=$('weekdays');wd.innerHTML='';lang.weekdays.forEach(day=>{const x=document.createElement('div');x.className='weekday';x.textContent=day;wd.append(x)});
+ const wd=$('weekdays');wd.innerHTML='';
+ lang.weekdays.forEach(day=>{const x=document.createElement('div');x.className='weekday';x.textContent=day;wd.append(x)});
  const grid=$('calendarGrid');grid.innerHTML='';
  const first=new Date(y,m,1),offset=(first.getDay()+6)%7,days=new Date(y,m+1,0).getDate();
  for(let i=0;i<offset;i++){const e=document.createElement('div');e.className='calendar-day empty';grid.append(e)}
  for(let day=1;day<=days;day++){
-  const d=new Date(y,m,day),key=dateKey(d),s=dayStats(key),b=document.createElement('button');b.type='button';b.className='calendar-day';b.textContent=day;
+  const d=new Date(y,m,day),key=dateKey(d),s=dayStats(key),b=document.createElement('button');
+  b.type='button';b.className='calendar-day';b.textContent=day;
   if(key===todayKey())b.classList.add('today');
   if(key===selectedDate)b.classList.add('selected');
   if(s.done>0)b.classList.add(s.total&&s.done===s.total?'complete':'has-progress');
-  b.addEventListener('click',()=>{selectedDate=key;renderCalendar()});grid.append(b);
+  b.addEventListener('click',()=>{selectedDate=key;renderCalendar()});
+  grid.append(b);
  }
  const s=dayStats(selectedDate);
  $('selectedDateTitle').textContent=fromKey(selectedDate).toLocaleDateString(profile.language==='ru'?'ru-RU':'en-US',{year:'numeric',month:'long',day:'numeric'});
@@ -245,33 +455,61 @@ function renderCalendar(){
  const area=$('selectedDateHabits');area.innerHTML='';
  const dayHabits=habits.filter(h=>activeOn(h,selectedDate));
  if(!dayHabits.length){area.textContent=t('noHabits');return}
- dayHabits.forEach(h=>{const p=document.createElement('p');p.textContent=(history[selectedDate]||{})[h.id]?'✓ ':'○ ';p.textContent+=h.name;area.append(p)});
+ dayHabits.forEach(h=>{
+  const p=document.createElement('p');p.className='primary-text';
+  p.textContent=((history[selectedDate]||{})[h.id]?'✓ ':'○ ')+(h.emoji||'🌱')+' '+h.name;
+  area.append(p);
+ });
 }
-function renderProfile(){$('nickname').value=profile.nickname||'';$('profileHabitCount').textContent=habits.filter(h=>!h.deleted).length;$('profileDaysCount').textContent=Object.keys(history).filter(k=>Object.keys(history[k]||{}).length>0).length}
+function renderProfile(){
+ $('nickname').value=profile.nickname||'';
+ $('profileHabitCount').textContent=habits.filter(h=>!h.deleted).length;
+ $('profileDaysCount').textContent=Object.keys(history).filter(k=>Object.keys(history[k]||{}).length>0).length;
+ $('paletteName').textContent=t('paletteNames')[profile.palette]||profile.palette;
+}
 function renderAll(){renderHabits();renderStats();renderCalendar();renderProfile()}
+
 document.querySelectorAll('.nav-button').forEach(btn=>btn.addEventListener('click',()=>{
  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
  document.querySelectorAll('.nav-button').forEach(b=>b.classList.remove('active'));
- $('page-'+btn.dataset.page).classList.add('active');btn.classList.add('active');window.scrollTo(0,0);
+ $('page-'+btn.dataset.page).classList.add('active');
+ btn.classList.add('active');window.scrollTo(0,0);
 }));
+
 $('habitForm').addEventListener('submit',e=>{
- e.preventDefault();const name=$('habitInput').value.trim();if(!name)return;
- habits.push({id:uid(),name,active:true,created:todayKey(),deleted:null});$('habitInput').value='';save();renderAll();
+ e.preventDefault();
+ const name=$('habitInput').value.trim();
+ if(!name)return;
+ habits.push({id:uid(),name,active:true,created:todayKey(),deleted:null,emoji:$('habitEmoji').value,category:$('habitCategory').value,color:$('habitColor').value});
+ $('habitInput').value='';save();renderAll();
 });
+
 $('saveProfile').addEventListener('click',()=>{
- profile.nickname=$('nickname').value.trim();profile.language=$('language').value;save();translate();$('profileMessage').textContent=t('profileSaved');
+ profile.nickname=$('nickname').value.trim();
+ profile.language=$('language').value;
+ save();translate();$('profileMessage').textContent=t('profileSaved');
 });
-$('language').addEventListener('change',()=>{profile.language=$('language').value;save();translate()});
-$('prevMonth').addEventListener('click',()=>{shownMonth=new Date(shownMonth.getFullYear(),shownMonth.getMonth()-1,1);renderCalendar()});
-$('nextMonth').addEventListener('click',()=>{shownMonth=new Date(shownMonth.getFullYear(),shownMonth.getMonth()+1,1);renderCalendar()});
+$('language').addEventListener('change',()=>{
+ profile.language=$('language').value;save();translate();
+});
+$('themeToggle').addEventListener('click',()=>{
+ profile.theme=profile.theme==='dark'?'light':'dark';applyAppearance();save();
+});
+document.querySelectorAll('.palette-button').forEach(btn=>btn.addEventListener('click',()=>{
+ profile.palette=btn.dataset.p;applyAppearance();save();
+}));
+$('prevMonth').addEventListener('click',()=>{
+ shownMonth=new Date(shownMonth.getFullYear(),shownMonth.getMonth()-1,1);renderCalendar();
+});
+$('nextMonth').addEventListener('click',()=>{
+ shownMonth=new Date(shownMonth.getFullYear(),shownMonth.getMonth()+1,1);renderCalendar();
+});
 load();translate();
 </script>
-
 <script>
-if('serviceWorker' in navigator){
+if('serviceWorker'in navigator){
  window.addEventListener('load',()=>{
-  navigator.serviceWorker.register('./service-worker.js')
-   .catch(error=>console.error('Offline error:',error));
+  navigator.serviceWorker.register('./service-worker.js').catch(error=>console.error('Offline error:',error));
  });
 }
 </script>
