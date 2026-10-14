@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'habit-tracker-v3';
+const CACHE_NAME = 'habit-tracker-v4';
 
 self.addEventListener('install', event => {
   event.waitUntil(
