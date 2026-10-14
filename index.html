@@ -1,2225 +1,323 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#101114">
+<meta name="theme-color" content="#0e1512">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="./manifest.json">
 <title>Habit Tracker</title>
-
 <style>
 :root {
-  --bg: #101114;
-  --panel: #202127;
-  --input: #292a32;
-  --text: #f5f5f5;
-  --muted: #a5a5ad;
-  --accent: #8b7cff;
-  --border: #383941;
-  --nav: #191a20;
-  --nav-active: #302b49;
-  --bar-bg: #2b2938;
-  --calendar-progress: #51477f;
-  --calendar-complete: #7767db;
-  color-scheme: dark;
+  --bg:#0e1512; --panel:#1c2821; --input:#25362b; --text:#f2fff5;
+  --muted:#a1b5a7; --accent:#7fd69b; --border:#34473a;
+  --nav:#151e18; --nav-active:#294533; --bar-bg:#25362b;
+  --calendar-progress:#365e43; --calendar-complete:#4b9a63;
+  color-scheme:dark;
 }
-
-:root[data-theme="ocean"] {
-  --bg:#0d151b; --panel:#182832; --input:#203743;
-  --text:#eefaff; --muted:#a0bbc5; --accent:#44c8db;
-  --border:#2c4552; --nav:#111f28; --nav-active:#204452;
-  --bar-bg:#203743; --calendar-progress:#286777;
-  --calendar-complete:#249bb0;
-}
-
-:root[data-theme="forest"] {
-  --bg:#0e1512; --panel:#1c2821; --input:#25362b;
-  --text:#f2fff5; --muted:#a1b5a7; --accent:#7fd69b;
-  --border:#34473a; --nav:#151e18; --nav-active:#294533;
-  --bar-bg:#25362b; --calendar-progress:#365e43;
-  --calendar-complete:#4b9a63;
-}
-
-:root[data-theme="sunset"] {
-  --bg:#191114; --panel:#2a1d25; --input:#38252f;
-  --text:#fff4f2; --muted:#c9adb4; --accent:#ff8a8a;
-  --border:#49313b; --nav:#21161c; --nav-active:#4b2b3b;
-  --bar-bg:#38252f; --calendar-progress:#774354;
-  --calendar-complete:#b85d72;
-}
-
 :root[data-theme="amber"] {
-  --bg:#17140d; --panel:#292317; --input:#39301f;
-  --text:#fff8e7; --muted:#c1b69b; --accent:#f2c66d;
-  --border:#4a3d27; --nav:#201b11; --nav-active:#49391d;
-  --bar-bg:#39301f; --calendar-progress:#6d552b;
-  --calendar-complete:#a98237;
+  --bg:#17140d; --panel:#292317; --input:#39301f; --text:#fff8e7;
+  --muted:#c1b69b; --accent:#f2c66d; --border:#4a3d27;
+  --nav:#201b11; --nav-active:#49391d; --bar-bg:#39301f;
+  --calendar-progress:#6d552b; --calendar-complete:#a98237;
 }
-
-:root[data-theme="light"] {
-  --bg:#f3f4f8; --panel:#ffffff; --input:#e8eaf2;
-  --text:#20212a; --muted:#696b78; --accent:#6d5ce8;
-  --border:#d7d9e3; --nav:#ffffff; --nav-active:#e8e3ff;
-  --bar-bg:#e8eaf2; --calendar-progress:#c9c0fa;
-  --calendar-complete:#8b7cff;
-  color-scheme:light;
+:root[data-theme="ocean"] {
+  --bg:#0d151b; --panel:#182832; --input:#203743; --text:#eefaff;
+  --muted:#a0bbc5; --accent:#44c8db; --border:#2c4552;
+  --nav:#111f28; --nav-active:#204452; --bar-bg:#203743;
+  --calendar-progress:#286777; --calendar-complete:#249bb0;
 }
-
 * { box-sizing:border-box; }
-
 body {
-  margin:0;
-  padding:20px 14px calc(100px + env(safe-area-inset-bottom));
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial,sans-serif;
-  transition:background .2s,color .2s;
+  margin:0; padding:16px 12px calc(82px + env(safe-area-inset-bottom));
+  background:var(--bg); color:var(--text); font-family:Arial,sans-serif;
 }
-
-main { max-width:720px; margin:auto; }
-
-h1 { font-size:28px; margin:8px 0; }
-h2 { font-size:20px; margin:4px 0 12px; }
+main { max-width:680px; margin:auto; }
+h1 { font-size:25px; margin:8px 0; }
+h2 { font-size:19px; margin:4px 0 12px; }
 h3 { font-size:16px; margin:0 0 8px; }
-p { color:var(--muted); line-height:1.5; }
-small { color:var(--muted); }
-
-button,input,select,textarea {
-  font:inherit;
-  border:0;
-  border-radius:10px;
-  padding:12px;
-}
-
-button {
-  background:var(--accent);
-  color:white;
-  cursor:pointer;
-  touch-action:manipulation;
-}
-
+p { color:var(--muted); line-height:1.45; }
+small,.muted { color:var(--muted); }
+button,input,select,textarea { font:inherit; border:0; border-radius:10px; padding:11px; }
+button { background:var(--accent); color:#102016; cursor:pointer; touch-action:manipulation; }
 button:disabled { opacity:.45; cursor:not-allowed; }
-
-input,select,textarea {
-  min-width:0;
-  width:100%;
-  background:var(--input);
-  color:var(--text);
-}
-
-input[type="checkbox"] {
-  appearance:auto;
-  -webkit-appearance:auto;
-  accent-color:var(--accent);
-  width:24px;
-  height:24px;
-  min-width:24px;
-  padding:0;
-  margin:0;
-  cursor:pointer;
-}
-
-input[type="color"] {
-  width:48px;
-  min-width:48px;
-  height:44px;
-  padding:4px;
-  cursor:pointer;
-}
-
+input,select,textarea { width:100%; min-width:0; background:var(--input); color:var(--text); }
+input[type="checkbox"] { width:23px; height:23px; accent-color:var(--accent); }
 input[type="file"] { display:none; }
-
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-  outline:2px solid var(--accent);
-  outline-offset:2px;
-}
-
+button:focus-visible,input:focus-visible,select:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 .page { display:none; }
 .page.active { display:block; }
-
 .card {
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:16px;
-  margin:12px 0;
-  min-width:0;
+  background:var(--panel); border:1px solid var(--border); border-radius:15px;
+  padding:14px; margin:12px 0; min-width:0;
 }
-
-.big-number { font-size:30px; font-weight:bold; margin:8px 0; }
-
-.muted { color:var(--muted); }
-
-.progress-track {
-  height:10px;
-  background:var(--border);
-  border-radius:20px;
-  overflow:hidden;
-  margin-top:12px;
-}
-
-.progress-fill {
-  height:100%;
-  width:0;
-  background:var(--accent);
-  border-radius:20px;
-  transition:width .25s;
-}
-
-form { margin:14px 0; }
-
-.form-grid {
-  display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  gap:9px;
-}
-
-.field { display:grid; gap:7px; margin:12px 0; }
-.field label { color:var(--muted); font-size:14px; }
-.full { grid-column:1/-1; }
-
+.big-number { font-size:28px; font-weight:bold; margin:8px 0; }
+.progress-track { height:9px; background:var(--border); border-radius:20px; overflow:hidden; margin-top:10px; }
+.progress-fill { height:100%; width:0; background:var(--accent); border-radius:20px; transition:width .2s; }
+.field { display:grid; gap:6px; margin:12px 0; }
+.field label { font-size:13px; color:var(--muted); }
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 .primary-button { width:100%; margin-top:8px; }
-
-.secondary-button {
-  background:var(--border);
-  color:var(--text);
-}
-
+.secondary-button { background:var(--border); color:var(--text); }
 .danger-button { background:#813e4b; color:white; }
-
-.small-button { padding:8px 10px; font-size:13px; }
-
+.small-button { padding:7px 9px; font-size:13px; }
 .habit-list { list-style:none; padding:0; margin:12px 0; }
-
 .habit-item {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:12px;
-  margin:10px 0;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-left:4px solid var(--habit-color,var(--accent));
-  border-radius:13px;
-  min-width:0;
+  display:flex; align-items:center; gap:9px; padding:11px; margin:8px 0;
+  background:var(--panel); border:1px solid var(--border);
+  border-left:4px solid var(--habit-color,var(--accent)); border-radius:13px;
 }
-
-.habit-item.done .habit-name {
-  text-decoration:line-through;
-  color:var(--muted);
-}
-
-.habit-emoji { font-size:23px; flex-shrink:0; }
-
-.habit-name {
-  flex:1;
-  min-width:0;
-  overflow-wrap:anywhere;
-}
-
-.habit-actions { display:flex; gap:5px; flex-shrink:0; }
-
-.habit-actions button { padding:9px; }
-
-.empty-message { padding:16px 0; color:var(--muted); }
-
-.chart {
-  display:flex;
-  align-items:end;
-  justify-content:space-around;
-  gap:7px;
-  height:190px;
-  padding-top:15px;
-}
-
-.chart-column {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:end;
-  height:100%;
-  flex:1;
-  min-width:0;
-  gap:7px;
-}
-
-.chart-bar-area {
-  height:135px;
-  width:100%;
-  max-width:34px;
-  display:flex;
-  align-items:end;
-  background:var(--bar-bg);
-  border-radius:7px;
-  overflow:hidden;
-}
-
-.chart-bar {
-  width:100%;
-  min-height:0;
-  background:var(--accent);
-  border-radius:7px;
-}
-
-.chart-label {
-  font-size:11px;
-  color:var(--muted);
-}
-
-.monthly-chart {
-  overflow-x:auto;
-  justify-content:flex-start;
-  gap:5px;
-  padding-bottom:5px;
-}
-
-.monthly-chart .chart-column { min-width:23px; }
-
-.monthly-chart .chart-bar-area { width:19px; }
-
-.stat-grid {
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:10px;
-}
-
-.stat-box {
-  background:var(--input);
-  border-radius:12px;
-  padding:12px;
-  min-width:0;
-}
-
-.stat-box .big-number { font-size:25px; }
-
-.calendar-head {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:8px;
-}
-
-.calendar-grid {
-  display:grid;
-  grid-template-columns:repeat(7,minmax(0,1fr));
-  gap:5px;
-  margin-top:14px;
-}
-
-.calendar-day {
-  aspect-ratio:1;
-  padding:0;
-  border-radius:8px;
-  background:var(--panel);
-  color:var(--text);
-  font-size:13px;
-  border:1px solid var(--border);
-}
-
+.habit-item.done .habit-name { text-decoration:line-through; color:var(--muted); }
+.habit-emoji { font-size:21px; }
+.habit-name { flex:1; min-width:0; overflow-wrap:anywhere; }
+.habit-actions { display:flex; gap:5px; }
+.habit-actions button { padding:7px 8px; }
+.inline-row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.inline-row > * { min-width:0; }
+.stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+.stat-box { background:var(--input); border-radius:12px; padding:11px; min-width:0; }
+.stat-box .big-number { font-size:23px; }
+.chart { display:flex; align-items:end; justify-content:space-around; gap:5px; height:160px; padding-top:12px; }
+.chart-column { display:flex; flex-direction:column; align-items:center; justify-content:end; height:100%; flex:1; min-width:0; gap:6px; }
+.chart-bar-area { height:115px; width:100%; max-width:30px; display:flex; align-items:end; background:var(--bar-bg); border-radius:6px; overflow:hidden; }
+.chart-bar { width:100%; background:var(--accent); border-radius:6px; }
+.chart-label { font-size:10px; color:var(--muted); }
+.monthly-chart { overflow-x:auto; justify-content:flex-start; gap:4px; }
+.monthly-chart .chart-column { min-width:20px; }
+.monthly-chart .chart-bar-area { width:17px; }
+.calendar-head { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+.calendar-grid { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:4px; margin-top:12px; }
+.calendar-day { aspect-ratio:1; padding:0; border-radius:8px; background:var(--panel); color:var(--text); font-size:12px; border:1px solid var(--border); }
 .calendar-day.empty { visibility:hidden; }
 .calendar-day.selected { outline:2px solid var(--text); }
 .calendar-day.today { border:2px solid var(--accent); }
 .calendar-day.has-progress { background:var(--calendar-progress); }
 .calendar-day.complete { background:var(--calendar-complete); color:white; }
-
-.weekday {
-  text-align:center;
-  font-size:12px;
-  color:var(--muted);
-}
-
+.weekday { text-align:center; font-size:11px; color:var(--muted); }
 .bottom-nav {
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  z-index:10;
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:4px;
-  padding:8px max(8px,env(safe-area-inset-right))
-    calc(8px + env(safe-area-inset-bottom))
-    max(8px,env(safe-area-inset-left));
-  background:var(--nav);
-  border-top:1px solid var(--border);
+  position:fixed; bottom:0; left:0; right:0; z-index:10;
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:3px;
+  padding:5px max(6px,env(safe-area-inset-right)) calc(5px + env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left));
+  background:var(--nav); border-top:1px solid var(--border);
 }
-
-.nav-button {
-  background:transparent;
-  color:var(--muted);
-  padding:8px 2px;
-  font-size:11px;
-  border-radius:10px;
-  min-width:0;
-}
-
-.nav-button.active {
-  background:var(--nav-active);
-  color:var(--text);
-}
-
-.nav-icon { display:block; font-size:19px; margin-bottom:4px; }
-
-.profile-avatar {
-  width:100px;
-  height:100px;
-  border-radius:50%;
-  object-fit:cover;
-  background:var(--input);
-  border:2px solid var(--accent);
-  display:block;
-  margin:8px auto 14px;
-}
-
-.avatar-placeholder {
-  width:100px;
-  height:100px;
-  border-radius:50%;
-  background:var(--input);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:42px;
-  margin:8px auto 14px;
-}
-
-.inline-row {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-}
-
-.inline-row > * { min-width:0; }
-
-.goal-card,.achievement-card,.reminder-card {
-  background:var(--input);
-  border-radius:12px;
-  padding:13px;
-  margin:10px 0;
-}
-
-.goal-header {
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  align-items:start;
-}
-
-.goal-actions {
-  display:flex;
-  gap:7px;
-  margin-top:10px;
-  flex-wrap:wrap;
-}
-
-.achievement-card {
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.achievement-icon { font-size:30px; }
-
+.nav-button { background:transparent; color:var(--muted); padding:5px 2px; font-size:11px; border-radius:9px; min-width:0; }
+.nav-button.active { background:var(--nav-active); color:var(--text); }
+.nav-icon { display:block; font-size:17px; margin-bottom:2px; }
+.profile-avatar,.avatar-placeholder { width:84px; height:84px; border-radius:50%; margin:8px auto 14px; }
+.profile-avatar { object-fit:contain; background:var(--input); border:2px solid var(--accent); display:block; }
+.avatar-placeholder { background:var(--input); display:flex; align-items:center; justify-content:center; font-size:36px; }
+.goal-card,.achievement-card,.reminder-card { background:var(--input); border-radius:12px; padding:12px; margin:9px 0; }
+.goal-header { display:flex; justify-content:space-between; gap:8px; align-items:start; }
+.goal-actions { display:flex; gap:6px; margin-top:9px; flex-wrap:wrap; }
+.achievement-card { display:flex; align-items:center; gap:10px; }
+.achievement-icon { font-size:27px; }
 .achievement-card.locked { opacity:.48; }
-
-.badge {
-  display:inline-block;
-  padding:4px 8px;
-  border-radius:20px;
-  background:var(--nav-active);
-  color:var(--text);
-  font-size:12px;
-}
-
-.notice {
-  position:fixed;
-  z-index:30;
-  left:12px;
-  right:12px;
-  bottom:calc(95px + env(safe-area-inset-bottom));
-  max-width:600px;
-  margin:auto;
-  background:var(--panel);
-  border:1px solid var(--accent);
-  padding:13px 15px;
-  border-radius:12px;
-  box-shadow:0 6px 24px #0004;
-}
-
-.notice[hidden] { display:none; }
-
-.modal {
-  position:fixed;
-  inset:0;
-  z-index:40;
-  background:#0009;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:16px;
-}
-
-.modal[hidden] { display:none; }
-
-.modal-card {
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:16px;
-  width:100%;
-  max-width:440px;
-  max-height:90vh;
-  overflow:auto;
-  padding:18px;
-}
-
-.modal-actions {
-  display:flex;
-  gap:8px;
-  margin-top:16px;
-}
-
+.badge { display:inline-block; padding:4px 8px; border-radius:20px; background:var(--nav-active); color:var(--text); font-size:12px; }
+details { border-top:1px solid var(--border); padding-top:12px; margin-top:12px; }
+summary { cursor:pointer; font-weight:bold; padding:5px 0; }
+.notice { position:fixed; z-index:50; left:12px; right:12px; bottom:calc(76px + env(safe-area-inset-bottom)); max-width:580px; margin:auto; background:var(--panel); border:1px solid var(--accent); padding:12px; border-radius:12px; box-shadow:0 6px 24px #0004; }
+.notice[hidden],.modal[hidden] { display:none; }
+.modal { position:fixed; inset:0; z-index:40; background:#0009; display:flex; align-items:center; justify-content:center; padding:14px; }
+.modal-card { background:var(--panel); border:1px solid var(--border); border-radius:16px; width:100%; max-width:440px; max-height:88vh; overflow:auto; padding:16px; }
+.modal-actions { display:flex; gap:8px; margin-top:14px; }
 .modal-actions button { flex:1; }
-
-hr { border:0; border-top:1px solid var(--border); margin:18px 0; }
-
-@media(min-width:600px) {
-  body { padding-top:30px; }
-  .nav-button { font-size:13px; }
-}
-
+.choice-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+.choice-grid button { min-height:58px; }
+hr { border:0; border-top:1px solid var(--border); margin:16px 0; }
 @media(max-width:380px) {
-  body { padding-left:9px; padding-right:9px; }
-  h1 { font-size:25px; }
-  .habit-item { gap:7px; padding:9px; }
-  .habit-actions button { padding:8px 7px; }
-  .form-grid { grid-template-columns:minmax(0,1fr); }
-  .full { grid-column:auto; }
+  body { padding-left:8px; padding-right:8px; }
+  h1 { font-size:23px; }
+  .habit-item { gap:6px; padding:8px; }
+  .habit-actions button { padding:7px 6px; }
+  .form-grid { grid-template-columns:1fr; }
 }
 </style>
 </head>
-
 <body>
 <main>
-
 <section id="page-habits" class="page active">
-  <h1 data-i18n="habitsTitle">Мои привычки</h1>
-  <p data-i18n="tagline">Маленькие действия. Регулярный прогресс.</p>
-
+  <div class="inline-row">
+    <div><h1 data-i18n="habitsTitle">Мои привычки</h1><p data-i18n="tagline">Маленькие действия. Регулярный прогресс.</p></div>
+    <button id="quickAdd" type="button" aria-label="Добавить" style="font-size:25px;padding:5px 15px;border-radius:13px">+</button>
+  </div>
   <div class="card">
     <p data-i18n="todayProgress">Выполнено сегодня</p>
     <div class="big-number" id="todayCount">0 / 0</div>
-    <div class="progress-track"><div class="progress-fill" id="todayBar"></div></div>
-    <p id="todayPercent">0%</p>
-    <p id="streakSummary"></p>
+    <div class="progress-track"><div id="todayBar" class="progress-fill"></div></div>
+    <p id="todayPercent">0%</p><p id="streakSummary"></p>
   </div>
-
-  <div class="card">
-    <h2 data-i18n="addHabitTitle">Новая привычка</h2>
-    <form id="habitForm">
-      <div class="field">
-        <label for="habitInput" data-i18n="habitName">Название</label>
-        <input id="habitInput" maxlength="80" required data-i18n-placeholder="habitPlaceholder" placeholder="Например, читать 20 минут">
-      </div>
-      <div class="form-grid">
-        <div class="field">
-          <label for="habitEmoji" data-i18n="habitEmoji">Значок</label>
-          <input id="habitEmoji" maxlength="8" value="✨">
-        </div>
-        <div class="field">
-          <label for="habitColor" data-i18n="habitColor">Цвет</label>
-          <input id="habitColor" type="color" value="#8b7cff">
-        </div>
-      </div>
-      <button class="primary-button" id="addHabitButton" type="submit" data-i18n="add">Добавить</button>
-      <p id="habitLimitMessage" class="muted"></p>
-    </form>
+  <div class="inline-row">
+    <h2 data-i18n="habitsToday">Сегодня</h2>
+    <button id="openGoals" class="secondary-button small-button" type="button" data-i18n="goalsButton">Цели</button>
   </div>
-
   <ul id="habitList" class="habit-list"></ul>
-  <p id="emptyHabits" class="empty-message" data-i18n="emptyHabits">Пока нет привычек. Добавь первую!</p>
-</section>
-
-<section id="page-stats" class="page">
-  <h1 data-i18n="statsTitle">Статистика</h1>
-  <p data-i18n="statsSubtitle">Следи за своим прогрессом.</p>
-
-  <div class="stat-grid">
-    <div class="stat-box">
-      <p data-i18n="weekRate">Выполнение за 7 дней</p>
-      <div class="big-number" id="weekRate">0%</div>
-      <div class="progress-track"><div class="progress-fill" id="weekBar"></div></div>
-    </div>
-    <div class="stat-box">
-      <p data-i18n="monthRate">Выполнение за 30 дней</p>
-      <div class="big-number" id="monthRate">0%</div>
-      <div class="progress-track"><div class="progress-fill" id="monthBar"></div></div>
-    </div>
-    <div class="stat-box">
-      <p data-i18n="currentStreak">Текущая серия</p>
-      <div class="big-number" id="currentStreak">0</div>
-      <small data-i18n="daysUnit">дней</small>
-    </div>
-    <div class="stat-box">
-      <p data-i18n="bestStreak">Лучшая серия</p>
-      <div class="big-number" id="bestStreak">0</div>
-      <small data-i18n="daysUnit">дней</small>
-    </div>
-  </div>
-
-  <div class="card">
-    <p data-i18n="weeklyChart">Результаты за последние 7 дней</p>
-    <div id="weeklyChart" class="chart"></div>
-  </div>
-
-  <div class="card">
-    <p data-i18n="monthlyChart">Результаты за последние 30 дней</p>
-    <div id="monthlyChart" class="chart monthly-chart"></div>
-  </div>
-
-  <div class="card">
-    <h2 data-i18n="weeklyReport">Отчёт за неделю</h2>
-    <p data-i18n="totalDone">Всего выполнений</p>
-    <div class="big-number" id="totalDone">0</div>
-    <p data-i18n="productiveDay">Самый продуктивный день</p>
-    <div id="productiveDay" class="big-number">—</div>
-    <p data-i18n="weekComparison">Сравнение с прошлой неделей</p>
-    <div id="weekComparison" class="big-number">—</div>
+  <p id="emptyHabits" class="muted" data-i18n="emptyHabits">Пока нет привычек. Нажми +, чтобы добавить первую.</p>
+  <div id="goalsQuickPanel" hidden>
+    <div class="inline-row"><h2 data-i18n="goalsTitle">Цели</h2><button id="closeGoals" class="secondary-button small-button" type="button">×</button></div>
+    <button id="quickAddGoal" class="primary-button" type="button" data-i18n="newGoal">Новая цель</button>
+    <div id="goalList"></div><p id="emptyGoals" class="muted" data-i18n="emptyGoals">Целей пока нет.</p>
   </div>
 </section>
 
 <section id="page-calendar" class="page">
-  <h1 data-i18n="calendarTitle">Календарь</h1>
-  <p data-i18n="calendarSubtitle">Выбирай дату и смотри результаты.</p>
-
+  <h1 data-i18n="calendarTitle">Календарь</h1><p data-i18n="calendarSubtitle">Выбирай дату и смотри результаты.</p>
   <div class="card">
-    <div class="calendar-head">
-      <button id="prevMonth" type="button" class="secondary-button" aria-label="Previous month">‹</button>
-      <strong id="monthLabel"></strong>
-      <button id="nextMonth" type="button" class="secondary-button" aria-label="Next month">›</button>
-    </div>
-    <div id="weekdays" class="calendar-grid"></div>
-    <div id="calendarGrid" class="calendar-grid"></div>
-    <p data-i18n="calendarLegend">Фиолетовый цвет означает, что привычки выполнялись.</p>
+    <div class="calendar-head"><button id="prevMonth" class="secondary-button" type="button">‹</button><strong id="monthLabel"></strong><button id="nextMonth" class="secondary-button" type="button">›</button></div>
+    <div id="weekdays" class="calendar-grid"></div><div id="calendarGrid" class="calendar-grid"></div>
+    <p data-i18n="calendarLegend">Цветные дни показывают выполнение привычек.</p>
   </div>
-
-  <div class="card">
-    <h2 id="selectedDateTitle"></h2>
-    <div class="big-number" id="selectedDateCount">0 / 0</div>
-    <div class="progress-track"><div id="selectedDateBar" class="progress-fill"></div></div>
-    <div id="selectedDateHabits"></div>
-  </div>
+  <div class="card"><h2 id="selectedDateTitle"></h2><div class="big-number" id="selectedDateCount">0 / 0</div><div class="progress-track"><div id="selectedDateBar" class="progress-fill"></div></div><div id="selectedDateHabits"></div></div>
 </section>
 
-<section id="page-goals" class="page">
-  <h1 data-i18n="goalsTitle">Цели</h1>
-  <p data-i18n="goalsSubtitle">Поставь цель и отслеживай прогресс.</p>
-
-  <div class="card">
-    <h2 data-i18n="newGoal">Новая цель</h2>
-    <form id="goalForm">
-      <div class="field">
-        <label for="goalName" data-i18n="goalName">Название цели</label>
-        <input id="goalName" maxlength="80" required data-i18n-placeholder="goalPlaceholder" placeholder="Например, прочитать 5 книг">
-      </div>
-
-      <div class="field">
-        <label for="goalType" data-i18n="goalType">Тип цели</label>
-        <select id="goalType">
-          <option value="habit" data-i18n="habitGoal">Цель по привычке</option>
-          <option value="quantity" data-i18n="quantityGoal">Количественная цель</option>
-        </select>
-      </div>
-
-      <div class="field" id="goalHabitField">
-        <label for="goalHabit" data-i18n="linkedHabit">Связанная привычка</label>
-        <select id="goalHabit"></select>
-      </div>
-
-      <div class="form-grid">
-        <div class="field">
-          <label for="goalTarget" data-i18n="target">Целевое количество</label>
-          <input id="goalTarget" type="number" min="1" max="100000" value="5" required>
-        </div>
-        <div class="field">
-          <label for="goalUnit" data-i18n="goalUnit">Единица измерения</label>
-          <input id="goalUnit" maxlength="20" data-i18n-placeholder="unitPlaceholder" placeholder="книг, страниц...">
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="goalPeriod" data-i18n="goalPeriod">Период</label>
-        <select id="goalPeriod">
-          <option value="month" data-i18n="thisMonth">В течение месяца</option>
-          <option value="total" data-i18n="allTime">За всё время</option>
-        </select>
-      </div>
-
-      <button class="primary-button" type="submit" id="addGoalButton" data-i18n="addGoal">Добавить цель</button>
-      <p id="goalLimitMessage" class="muted"></p>
-    </form>
+<section id="page-stats" class="page">
+  <h1 data-i18n="statsTitle">Статистика</h1><p data-i18n="statsSubtitle">Следи за своим прогрессом.</p>
+  <div class="stat-grid">
+    <div class="stat-box"><p data-i18n="weekRate">За 7 дней</p><div class="big-number" id="weekRate">0%</div><div class="progress-track"><div id="weekBar" class="progress-fill"></div></div></div>
+    <div class="stat-box"><p data-i18n="monthRate">За 30 дней</p><div class="big-number" id="monthRate">0%</div><div class="progress-track"><div id="monthBar" class="progress-fill"></div></div></div>
+    <div class="stat-box"><p data-i18n="currentStreak">Текущая серия</p><div class="big-number" id="currentStreak">0</div><small data-i18n="daysUnit">дней</small></div>
+    <div class="stat-box"><p data-i18n="bestStreak">Лучшая серия</p><div class="big-number" id="bestStreak">0</div><small data-i18n="daysUnit">дней</small></div>
   </div>
-
-  <div id="goalList"></div>
-  <p id="emptyGoals" class="empty-message" data-i18n="emptyGoals">Целей пока нет.</p>
-</section>
-
-<section id="page-achievements" class="page">
-  <h1 data-i18n="achievementsTitle">Достижения</h1>
-  <p data-i18n="achievementsSubtitle">Награды за твой прогресс.</p>
-  <div class="card">
-    <p data-i18n="unlockedAchievements">Открыто достижений</p>
-    <div class="big-number" id="achievementCount">0 / 0</div>
-    <div class="progress-track"><div id="achievementBar" class="progress-fill"></div></div>
-  </div>
-  <div id="achievementList"></div>
+  <div class="card"><p data-i18n="weeklyChart">Результаты за 7 дней</p><div id="weeklyChart" class="chart"></div></div>
+  <div class="card"><p data-i18n="monthlyChart">Результаты за 30 дней</p><div id="monthlyChart" class="chart monthly-chart"></div></div>
+  <div class="card"><h2 data-i18n="weeklyReport">Отчёт за неделю</h2><p data-i18n="totalDone">Всего выполнений</p><div class="big-number" id="totalDone">0</div><p data-i18n="productiveDay">Самый продуктивный день</p><div class="big-number" id="productiveDay">—</div><p data-i18n="weekComparison">Сравнение с прошлой неделей</p><div class="big-number" id="weekComparison">—</div></div>
 </section>
 
 <section id="page-profile" class="page">
-  <h1 data-i18n="profileTitle">Профиль</h1>
-  <p data-i18n="profileSubtitle">Настрой приложение под себя.</p>
-
+  <h1 data-i18n="profileTitle">Профиль</h1><p data-i18n="profileSubtitle">Настрой приложение под себя.</p>
   <div class="card">
-    <div id="avatarDisplay"></div>
-    <input type="file" id="avatarInput" accept="image/*">
-    <button id="chooseAvatar" class="secondary-button primary-button" type="button" data-i18n="chooseAvatar">Выбрать фото из галереи</button>
+    <div id="avatarDisplay"></div><input type="file" id="avatarInput" accept="image/*">
+    <button id="chooseAvatar" class="secondary-button primary-button" type="button" data-i18n="chooseAvatar">Выбрать фото</button>
     <button id="removeAvatar" class="secondary-button primary-button" type="button" data-i18n="removeAvatar">Убрать фото</button>
-
-    <div class="field">
-      <label for="nickname" data-i18n="nickname">Твоё имя</label>
-      <input id="nickname" maxlength="30" data-i18n-placeholder="nicknamePlaceholder" placeholder="Например, Alex">
-    </div>
-
-    <div class="field">
-      <label for="language" data-i18n="language">Язык приложения</label>
-      <select id="language">
-        <option value="ru">Русский</option>
-        <option value="en">English</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label for="themeSelect" data-i18n="theme">Тема оформления</label>
-      <select id="themeSelect">
-        <option value="old" data-i18n="themeOld">Старая фиолетовая</option>
-        <option value="ocean" data-i18n="themeOcean">Океан</option>
-        <option value="forest" data-i18n="themeForest">Лес</option>
-        <option value="sunset" data-i18n="themeSunset">Закат</option>
-        <option value="amber" data-i18n="themeAmber">Янтарь</option>
-        <option value="light" data-i18n="themeLight">Светлая</option>
-      </select>
-    </div>
-
-    <div class="inline-row">
-      <label for="soundToggle" data-i18n="sound">Звуки</label>
-      <input id="soundToggle" type="checkbox" checked>
-    </div>
-
-    <button id="saveProfile" class="primary-button" type="button" data-i18n="saveProfile">Сохранить профиль</button>
-    <p id="profileMessage" role="status"></p>
-  </div>
-
-  <div class="card">
-    <h2 data-i18n="remindersTitle">Напоминания</h2>
-    <p data-i18n="remindersDescription">До 3 напоминаний в день.</p>
-    <form id="reminderForm">
-      <div class="field">
-        <label for="reminderTime" data-i18n="reminderTime">Время</label>
-        <input id="reminderTime" type="time" required value="18:00">
-      </div>
-      <div class="field">
-        <label for="reminderHabit" data-i18n="reminderHabit">Привычка</label>
-        <select id="reminderHabit"></select>
-      </div>
-      <button class="primary-button" type="submit" id="addReminderButton" data-i18n="addReminder">Добавить напоминание</button>
-    </form>
-    <div id="reminderList"></div>
-    <p id="notificationStatus" class="muted"></p>
-  </div>
-
-  <div class="card">
-    <h2 data-i18n="dataTitle">Данные</h2>
-    <p data-i18n="dataDescription">Создай резервную копию или восстанови сохранённые данные.</p>
-    <button id="exportButton" class="primary-button" type="button" data-i18n="exportData">Скачать резервную копию</button>
-    <button id="importButton" class="secondary-button primary-button" type="button" data-i18n="importData">Восстановить из копии</button>
-    <input type="file" id="importInput" accept=".json,application/json">
-    <hr>
-    <p data-i18n="profileStats">Твоя статистика</p>
-    <div class="stat-grid">
-      <div class="stat-box">
-        <p data-i18n="activeHabits">Активные привычки</p>
-        <div class="big-number" id="profileHabitCount">0 / 10</div>
-      </div>
-      <div class="stat-box">
-        <p data-i18n="activeGoals">Активные цели</p>
-        <div class="big-number" id="profileGoalCount">0 / 5</div>
-      </div>
-    </div>
+    <div class="field"><label for="nickname" data-i18n="nickname">Твоё имя</label><input id="nickname" maxlength="30" placeholder="Alex"></div>
+    <div class="field"><label for="language" data-i18n="language">Язык</label><select id="language"><option value="ru">Русский</option><option value="en">English</option></select></div>
+    <div class="field"><label for="themeSelect" data-i18n="theme">Тема</label><select id="themeSelect"><option value="forest" data-i18n="themeForest">Тёмно-зелёная</option><option value="amber" data-i18n="themeAmber">Янтарная</option><option value="ocean" data-i18n="themeOcean">Океан</option></select></div>
+    <div class="inline-row"><label for="soundToggle" data-i18n="sound">Звуки</label><input id="soundToggle" type="checkbox" checked></div>
+    <button id="saveProfile" class="primary-button" type="button" data-i18n="saveProfile">Сохранить профиль</button><p id="profileMessage" role="status"></p>
+    <div class="stat-grid"><div class="stat-box"><p data-i18n="activeHabits">Привычки</p><div class="big-number" id="profileHabitCount">0 / 10</div></div><div class="stat-box"><p data-i18n="activeGoals">Цели</p><div class="big-number" id="profileGoalCount">0 / 5</div></div></div>
+    <details><summary data-i18n="achievementsTitle">Достижения</summary><p data-i18n="unlockedAchievements">Открыто достижений</p><div class="big-number" id="achievementCount">0 / 10</div><div class="progress-track"><div id="achievementBar" class="progress-fill"></div></div><div id="achievementList"></div></details>
+    <details><summary data-i18n="goalsTitle">Цели</summary><button id="profileAddGoal" class="primary-button" type="button" data-i18n="newGoal">Новая цель</button><div id="profileGoalList"></div><p id="profileEmptyGoals" class="muted" data-i18n="emptyGoals">Целей пока нет.</p></details>
+    <details><summary data-i18n="remindersTitle">Напоминания</summary><p data-i18n="remindersDescription">До 3 напоминаний в день.</p>
+      <form id="reminderForm"><div class="field"><label for="reminderTime" data-i18n="reminderTime">Время</label><input id="reminderTime" type="time" required value="18:00"></div><div class="field"><label for="reminderHabit" data-i18n="reminderHabit">Привычка</label><select id="reminderHabit"></select></div><button class="primary-button" id="addReminderButton" type="submit" data-i18n="addReminder">Добавить напоминание</button></form>
+      <div id="reminderList"></div><p id="notificationStatus" class="muted"></p>
+    </details>
+    <details><summary data-i18n="dataTitle">Данные и резервная копия</summary><p data-i18n="dataDescription">Создай копию или восстанови данные.</p><button id="exportButton" class="primary-button" type="button" data-i18n="exportData">Скачать резервную копию</button><button id="importButton" class="secondary-button primary-button" type="button" data-i18n="importData">Восстановить из копии</button><input type="file" id="importInput" accept=".json,application/json"></details>
   </div>
 </section>
-
 </main>
 
 <nav class="bottom-nav">
   <button class="nav-button active" data-page="habits" type="button"><span class="nav-icon">☑</span><span data-i18n="navHabits">Привычки</span></button>
-  <button class="nav-button" data-page="stats" type="button"><span class="nav-icon">▥</span><span data-i18n="navStats">Статистика</span></button>
   <button class="nav-button" data-page="calendar" type="button"><span class="nav-icon">▦</span><span data-i18n="navCalendar">Календарь</span></button>
-  <button class="nav-button" data-page="goals" type="button"><span class="nav-icon">🎯</span><span data-i18n="navGoals">Цели</span></button>
-  <button class="nav-button" data-page="achievements" type="button"><span class="nav-icon">🏆</span><span data-i18n="navAchievements">Награды</span></button>
+  <button class="nav-button" data-page="stats" type="button"><span class="nav-icon">▥</span><span data-i18n="navStats">Статистика</span></button>
   <button class="nav-button" data-page="profile" type="button"><span class="nav-icon">◉</span><span data-i18n="navProfile">Профиль</span></button>
 </nav>
 
 <div id="notice" class="notice" role="status" hidden></div>
+<div id="addModal" class="modal" hidden><div class="modal-card"><h2 data-i18n="addWhat">Что добавить?</h2><div class="choice-grid"><button id="chooseHabitAdd" type="button" data-i18n="newHabit">Привычку</button><button id="chooseGoalAdd" type="button" data-i18n="newGoal">Цель</button></div><div class="modal-actions"><button id="cancelAdd" class="secondary-button" type="button" data-i18n="cancel">Отмена</button></div></div></div>
 
-<div id="editModal" class="modal" hidden>
-  <form id="editForm" class="modal-card">
-    <h2 data-i18n="editHabit">Редактировать привычку</h2>
-    <input id="editHabitId" type="hidden">
-    <div class="field">
-      <label for="editHabitName" data-i18n="habitName">Название</label>
-      <input id="editHabitName" maxlength="80" required>
-    </div>
-    <div class="form-grid">
-      <div class="field">
-        <label for="editHabitEmoji" data-i18n="habitEmoji">Значок</label>
-        <input id="editHabitEmoji" maxlength="8">
-      </div>
-      <div class="field">
-        <label for="editHabitColor" data-i18n="habitColor">Цвет</label>
-        <input id="editHabitColor" type="color">
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button type="submit" data-i18n="save">Сохранить</button>
-      <button type="button" id="cancelEdit" class="secondary-button" data-i18n="cancel">Отмена</button>
-    </div>
-  </form>
-</div>
+<div id="habitModal" class="modal" hidden><form id="habitForm" class="modal-card"><h2 id="habitModalTitle" data-i18n="newHabit">Новая привычка</h2><input id="editHabitId" type="hidden"><div class="field"><label for="habitInput" data-i18n="habitName">Название</label><input id="habitInput" maxlength="80" required placeholder="Например, читать 20 минут"></div><div class="form-grid"><div class="field"><label for="habitEmoji" data-i18n="habitEmoji">Значок</label><input id="habitEmoji" maxlength="8" value="✨"></div><div class="field"><label for="habitColor" data-i18n="habitColor">Цвет</label><input id="habitColor" type="color" value="#7fd69b"></div></div><p id="habitLimitMessage" class="muted"></p><div class="modal-actions"><button type="submit" id="addHabitButton" data-i18n="save">Сохранить</button><button id="cancelHabit" class="secondary-button" type="button" data-i18n="cancel">Отмена</button></div></form></div>
+
+<div id="goalModal" class="modal" hidden><form id="goalForm" class="modal-card"><h2 data-i18n="newGoal">Новая цель</h2><div class="field"><label for="goalName" data-i18n="goalName">Название цели</label><input id="goalName" maxlength="80" required placeholder="Например, прочитать 5 книг"></div><div class="field"><label for="goalType" data-i18n="goalType">Тип цели</label><select id="goalType"><option value="habit" data-i18n="habitGoal">Цель по привычке</option><option value="quantity" data-i18n="quantityGoal">Количественная цель</option></select></div><div class="field" id="goalHabitField"><label for="goalHabit" data-i18n="linkedHabit">Связанная привычка</label><select id="goalHabit"></select></div><div class="form-grid"><div class="field"><label for="goalTarget" data-i18n="target">Целевое количество</label><input id="goalTarget" type="number" min="1" max="100000" value="5" required></div><div class="field"><label for="goalUnit" data-i18n="goalUnit">Единица измерения</label><input id="goalUnit" maxlength="20" placeholder="книг, страниц..."></div></div><div class="field"><label for="goalPeriod" data-i18n="goalPeriod">Период</label><select id="goalPeriod"><option value="month" data-i18n="thisMonth">В течение месяца</option><option value="total" data-i18n="allTime">За всё время</option></select></div><p id="goalLimitMessage" class="muted"></p><div class="modal-actions"><button type="submit" id="addGoalButton" data-i18n="addGoal">Добавить цель</button><button id="cancelGoal" class="secondary-button" type="button" data-i18n="cancel">Отмена</button></div></form></div>
+
+<div id="editModal" class="modal" hidden><form id="editForm" class="modal-card"><h2 data-i18n="editHabit">Редактировать привычку</h2><input id="editId" type="hidden"><div class="field"><label for="editName" data-i18n="habitName">Название</label><input id="editName" maxlength="80" required></div><div class="form-grid"><div class="field"><label for="editEmoji" data-i18n="habitEmoji">Значок</label><input id="editEmoji" maxlength="8"></div><div class="field"><label for="editColor" data-i18n="habitColor">Цвет</label><input id="editColor" type="color"></div></div><div class="modal-actions"><button type="submit" data-i18n="save">Сохранить</button><button id="cancelEdit" class="secondary-button" type="button" data-i18n="cancel">Отмена</button></div></form></div>
 
 <script>
 "use strict";
-
 const $ = id => document.getElementById(id);
 const todayKey = () => dateKey(new Date());
-
-function dateKey(d) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-}
-
-function fromKey(key) {
-  const [y,m,d] = key.split("-").map(Number);
-  return new Date(y,m-1,d);
-}
-
-function shiftDate(date, amount) {
-  const d = new Date(date);
-  d.setDate(d.getDate()+amount);
-  return d;
-}
-
-function monthKey(date) {
-  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}`;
-}
-
-function uid(prefix="id") {
-  return prefix+"-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,9);
-}
-
-function read(key, fallback=null) {
-  try {
-    const value = localStorage.getItem(key);
-    return value === null ? fallback : JSON.parse(value);
-  } catch {
-    return fallback;
-  }
-}
-
-const translations = {
-ru: {
-  habitsTitle:"Мои привычки", tagline:"Маленькие действия. Регулярный прогресс.",
-  todayProgress:"Выполнено сегодня", addHabitTitle:"Новая привычка",
-  habitName:"Название", habitEmoji:"Значок", habitColor:"Цвет",
-  habitPlaceholder:"Например, читать 20 минут", add:"Добавить",
-  emptyHabits:"Пока нет привычек. Добавь первую!",
-  habitLimit:"Достигнут лимит: 10 привычек.", edit:"Изменить",
-  delete:"Удалить", deleteConfirm:"Удалить эту привычку? История прошлых дней сохранится.",
-  statsTitle:"Статистика", statsSubtitle:"Следи за своим прогрессом.",
-  weekRate:"Выполнение за 7 дней", monthRate:"Выполнение за 30 дней",
-  weeklyChart:"Результаты за последние 7 дней",
-  monthlyChart:"Результаты за последние 30 дней",
-  currentStreak:"Текущая серия", bestStreak:"Лучшая серия",
-  daysUnit:"дней", totalDone:"Всего выполнений",
-  weeklyReport:"Отчёт за неделю", productiveDay:"Самый продуктивный день",
-  weekComparison:"Сравнение с прошлой неделей",
-  calendarTitle:"Календарь", calendarSubtitle:"Выбирай дату и смотри результаты.",
-  calendarLegend:"Фиолетовые дни показывают выполнение привычек.",
-  noHabits:"В этот день нет активных привычек.",
-  noHistory:"Нет выполненных привычек.",
-  goalsTitle:"Цели", goalsSubtitle:"Поставь цель и отслеживай прогресс.",
-  newGoal:"Новая цель", goalName:"Название цели",
-  goalPlaceholder:"Например, прочитать 5 книг", goalType:"Тип цели",
-  habitGoal:"Цель по привычке", quantityGoal:"Количественная цель",
-  linkedHabit:"Связанная привычка", target:"Целевое количество",
-  goalUnit:"Единица измерения", unitPlaceholder:"книг, страниц...",
-  goalPeriod:"Период", thisMonth:"В течение месяца", allTime:"За всё время",
-  addGoal:"Добавить цель", emptyGoals:"Целей пока нет.",
-  goalLimit:"Достигнут лимит: 5 целей.", deleteGoal:"Удалить цель",
-  deleteGoalConfirm:"Удалить эту цель?",
-  noHabitsForGoal:"Сначала создай привычку, чтобы поставить цель по привычке.",
-  goalProgress:"Прогресс", increase:"+1", decrease:"−1",
-  complete:"Цель достигнута!", remaining:"Осталось",
-  achievementsTitle:"Достижения", achievementsSubtitle:"Награды за твой прогресс.",
-  unlockedAchievements:"Открыто достижений",
-  profileTitle:"Профиль", profileSubtitle:"Настрой приложение под себя.",
-  nickname:"Твоё имя", nicknamePlaceholder:"Например, Alex",
-  language:"Язык приложения", saveProfile:"Сохранить профиль",
-  profileSaved:"Профиль сохранён!", chooseAvatar:"Выбрать фото из галереи",
-  removeAvatar:"Убрать фото", theme:"Тема оформления",
-  themeOld:"Старая фиолетовая", themeOcean:"Океан", themeForest:"Лес",
-  themeSunset:"Закат", themeAmber:"Янтарь", themeLight:"Светлая",
-  sound:"Звуки", remindersTitle:"Напоминания",
-  remindersDescription:"До 3 напоминаний в день.",
-  reminderTime:"Время", reminderHabit:"Привычка",
-  addReminder:"Добавить напоминание", noReminders:"Напоминаний пока нет.",
-  reminderLimit:"Можно добавить максимум 3 напоминания.",
-  reminderSaved:"Напоминание добавлено.",
-  notificationsGranted:"Разрешение на уведомления предоставлено.",
-  notificationsDenied:"Уведомления запрещены. Проверь настройки браузера.",
-  notificationsUnsupported:"Этот браузер не поддерживает уведомления.",
-  notificationGeneral:"Общее напоминание", dataTitle:"Данные",
-  dataDescription:"Создай резервную копию или восстанови сохранённые данные.",
-  exportData:"Скачать резервную копию", importData:"Восстановить из копии",
-  backupSaved:"Резервная копия подготовлена.",
-  backupRestored:"Данные восстановлены.",
-  backupError:"Не удалось прочитать резервную копию.",
-  profileStats:"Твоя статистика", activeHabits:"Активные привычки",
-  activeGoals:"Активные цели", navHabits:"Привычки", navStats:"Статистика",
-  navCalendar:"Календарь", navGoals:"Цели", navAchievements:"Награды",
-  navProfile:"Профиль", editHabit:"Редактировать привычку",
-  save:"Сохранить", cancel:"Отмена", deleteReminder:"Удалить",
-  reminderOn:"Включено", reminderOff:"Выключено",
-  firstAchievement:"Первый шаг", firstDescription:"Выполни первую привычку.",
-  tasks10:"Десятка", tasks10Desc:"Выполни 10 привычек.",
-  tasks50:"Полсотни", tasks50Desc:"Выполни 50 привычек.",
-  tasks100:"Сотня", tasks100Desc:"Выполни 100 привычек.",
-  streak7:"Неделя силы", streak7Desc:"Серия из 7 дней.",
-  streak30:"Месяц упорства", streak30Desc:"Серия из 30 дней.",
-  streak60:"Два месяца", streak60Desc:"Серия из 60 дней.",
-  streak100:"Сто дней", streak100Desc:"Серия из 100 дней.",
-  firstGoal:"Цель достигнута", firstGoalDesc:"Заверши первую цель.",
-  allHabits:"Полный комплект", allHabitsDesc:"Выполни все привычки за день.",
-  dayNames:["Вс","Пн","Вт","Ср","Чт","Пт","Сб"],
-  weekdays:["Пн","Вт","Ср","Чт","Пт","Сб","Вс"],
-  months:["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"],
-  completed:"Выполнено", notCompleted:"Не выполнено",
-  noData:"Недостаточно данных", up:"больше", down:"меньше", same:"без изменений",
-  day:"день", days:"дней", all:"Все привычки"
+function dateKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;}
+function fromKey(k){const [y,m,d]=k.split("-").map(Number);return new Date(y,m-1,d);}
+function shiftDate(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x;}
+function monthKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;}
+function uid(p="id"){return p+"-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,9);}
+function read(k,f=null){try{const v=localStorage.getItem(k);return v===null?f:JSON.parse(v);}catch{return f;}}
+const tr={
+ru:{
+habitsTitle:"Мои привычки",tagline:"Маленькие действия. Регулярный прогресс.",todayProgress:"Выполнено сегодня",habitsToday:"Сегодня",newHabit:"Новая привычка",habitName:"Название",habitEmoji:"Значок",habitColor:"Цвет",emptyHabits:"Пока нет привычек. Нажми +, чтобы добавить первую.",habitLimit:"Достигнут лимит: 10 привычек.",edit:"Изменить",delete:"Удалить",deleteConfirm:"Удалить эту привычку? История прошлых дней сохранится.",addWhat:"Что добавить?",newGoal:"Новая цель",goalsButton:"Цели",goalsTitle:"Цели",goalsSubtitle:"Поставь цель и отслеживай прогресс.",goalName:"Название цели",goalType:"Тип цели",habitGoal:"Цель по привычке",quantityGoal:"Количественная цель",linkedHabit:"Связанная привычка",target:"Целевое количество",goalUnit:"Единица измерения",goalPeriod:"Период",thisMonth:"В течение месяца",allTime:"За всё время",addGoal:"Добавить цель",emptyGoals:"Целей пока нет.",goalLimit:"Достигнут лимит: 5 целей.",goalProgress:"Прогресс",increase:"+1",decrease:"−1",complete:"Цель достигнута!",remaining:"Осталось",noHabitsForGoal:"Сначала создай привычку.",statsTitle:"Статистика",statsSubtitle:"Следи за своим прогрессом.",weekRate:"За 7 дней",monthRate:"За 30 дней",weeklyChart:"Результаты за 7 дней",monthlyChart:"Результаты за 30 дней",currentStreak:"Текущая серия",bestStreak:"Лучшая серия",daysUnit:"дней",totalDone:"Всего выполнений",weeklyReport:"Отчёт за неделю",productiveDay:"Самый продуктивный день",weekComparison:"Сравнение с прошлой неделей",calendarTitle:"Календарь",calendarSubtitle:"Выбирай дату и смотри результаты.",calendarLegend:"Цветные дни показывают выполнение привычек.",noHabits:"В этот день нет активных привычек.",completed:"Выполнено",notCompleted:"Не выполнено",noData:"Недостаточно данных",up:"больше",down:"меньше",same:"без изменений",profileTitle:"Профиль",profileSubtitle:"Настрой приложение под себя.",nickname:"Твоё имя",language:"Язык приложения",theme:"Тема оформления",themeForest:"Тёмно-зелёная",themeAmber:"Янтарная",themeOcean:"Океан",sound:"Звуки",saveProfile:"Сохранить профиль",profileSaved:"Профиль сохранён!",chooseAvatar:"Выбрать фото из галереи",removeAvatar:"Убрать фото",activeHabits:"Активные привычки",activeGoals:"Активные цели",achievementsTitle:"Достижения",unlockedAchievements:"Открыто достижений",remindersTitle:"Напоминания",remindersDescription:"До 3 напоминаний в день.",reminderTime:"Время",reminderHabit:"Привычка",addReminder:"Добавить напоминание",noReminders:"Напоминаний пока нет.",reminderLimit:"Можно добавить максимум 3 напоминания.",reminderSaved:"Напоминание добавлено.",notificationsGranted:"Уведомления разрешены.",notificationsDenied:"Уведомления запрещены в настройках браузера.",notificationsUnsupported:"Браузер не поддерживает уведомления.",notificationGeneral:"Общее напоминание",reminderOn:"Включено",reminderOff:"Выключено",dataTitle:"Данные и резервная копия",dataDescription:"Создай копию или восстанови данные.",exportData:"Скачать резервную копию",importData:"Восстановить из копии",backupSaved:"Резервная копия подготовлена.",backupRestored:"Данные восстановлены.",backupError:"Не удалось прочитать резервную копию.",navHabits:"Привычки",navCalendar:"Календарь",navStats:"Статистика",navProfile:"Профиль",save:"Сохранить",cancel:"Отмена",editHabit:"Редактировать привычку",firstAchievement:"Первый шаг",firstDescription:"Выполни первую привычку.",tasks10:"Десятка",tasks10Desc:"Выполни 10 привычек.",tasks50:"Полсотни",tasks50Desc:"Выполни 50 привычек.",tasks100:"Сотня",tasks100Desc:"Выполни 100 привычек.",streak7:"Неделя силы",streak7Desc:"Серия из 7 дней.",streak30:"Месяц упорства",streak30Desc:"Серия из 30 дней.",streak60:"Два месяца",streak60Desc:"Серия из 60 дней.",streak100:"Сто дней",streak100Desc:"Серия из 100 дней.",firstGoal:"Цель достигнута",firstGoalDesc:"Заверши первую цель.",allHabits:"Полный комплект",allHabitsDesc:"Выполни все привычки за день.",dayNames:["Вс","Пн","Вт","Ср","Чт","Пт","Сб"],weekdays:["Пн","Вт","Ср","Чт","Пт","Сб","Вс"],months:["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"]
 },
-en: {
-  habitsTitle:"My Habits", tagline:"Small actions. Consistent progress.",
-  todayProgress:"Completed today", addHabitTitle:"New habit",
-  habitName:"Name", habitEmoji:"Icon", habitColor:"Color",
-  habitPlaceholder:"For example, read for 20 minutes", add:"Add",
-  emptyHabits:"No habits yet. Add your first one!",
-  habitLimit:"Limit reached: 10 habits.", edit:"Edit",
-  delete:"Delete", deleteConfirm:"Delete this habit? Past history will remain.",
-  statsTitle:"Statistics", statsSubtitle:"Track your progress.",
-  weekRate:"Completion over 7 days", monthRate:"Completion over 30 days",
-  weeklyChart:"Results over the last 7 days",
-  monthlyChart:"Results over the last 30 days",
-  currentStreak:"Current streak", bestStreak:"Best streak",
-  daysUnit:"days", totalDone:"Total completions",
-  weeklyReport:"Weekly report", productiveDay:"Most productive day",
-  weekComparison:"Compared with last week",
-  calendarTitle:"Calendar", calendarSubtitle:"Choose a date to view your results.",
-  calendarLegend:"Purple days show completed habits.",
-  noHabits:"No active habits on this day.",
-  noHistory:"No completed habits.",
-  goalsTitle:"Goals", goalsSubtitle:"Set a goal and track your progress.",
-  newGoal:"New goal", goalName:"Goal name",
-  goalPlaceholder:"For example, read 5 books", goalType:"Goal type",
-  habitGoal:"Habit goal", quantityGoal:"Quantity goal",
-  linkedHabit:"Linked habit", target:"Target amount",
-  goalUnit:"Unit", unitPlaceholder:"books, pages...",
-  goalPeriod:"Period", thisMonth:"This month", allTime:"All time",
-  addGoal:"Add goal", emptyGoals:"No goals yet.",
-  goalLimit:"Limit reached: 5 goals.", deleteGoal:"Delete goal",
-  deleteGoalConfirm:"Delete this goal?",
-  noHabitsForGoal:"Create a habit first to set a habit goal.",
-  goalProgress:"Progress", increase:"+1", decrease:"−1",
-  complete:"Goal completed!", remaining:"Remaining",
-  achievementsTitle:"Achievements", achievementsSubtitle:"Rewards for your progress.",
-  unlockedAchievements:"Achievements unlocked",
-  profileTitle:"Profile", profileSubtitle:"Personalize your app.",
-  nickname:"Your name", nicknamePlaceholder:"For example, Alex",
-  language:"App language", saveProfile:"Save profile",
-  profileSaved:"Profile saved!", chooseAvatar:"Choose photo from gallery",
-  removeAvatar:"Remove photo", theme:"Theme",
-  themeOld:"Original purple", themeOcean:"Ocean", themeForest:"Forest",
-  themeSunset:"Sunset", themeAmber:"Amber", themeLight:"Light",
-  sound:"Sounds", remindersTitle:"Reminders",
-  remindersDescription:"Up to 3 reminders per day.",
-  reminderTime:"Time", reminderHabit:"Habit",
-  addReminder:"Add reminder", noReminders:"No reminders yet.",
-  reminderLimit:"You can add up to 3 reminders.",
-  reminderSaved:"Reminder added.",
-  notificationsGranted:"Notifications are enabled.",
-  notificationsDenied:"Notifications are blocked. Check browser settings.",
-  notificationsUnsupported:"This browser does not support notifications.",
-  notificationGeneral:"General reminder", dataTitle:"Data",
-  dataDescription:"Create a backup or restore saved data.",
-  exportData:"Download backup", importData:"Restore from backup",
-  backupSaved:"Backup prepared.", backupRestored:"Data restored.",
-  backupError:"Could not read the backup.",
-  profileStats:"Your statistics", activeHabits:"Active habits",
-  activeGoals:"Active goals", navHabits:"Habits", navStats:"Stats",
-  navCalendar:"Calendar", navGoals:"Goals", navAchievements:"Awards",
-  navProfile:"Profile", editHabit:"Edit habit", save:"Save",
-  cancel:"Cancel", deleteReminder:"Delete",
-  reminderOn:"Enabled", reminderOff:"Disabled",
-  firstAchievement:"First step", firstDescription:"Complete your first habit.",
-  tasks10:"Ten", tasks10Desc:"Complete 10 habits.",
-  tasks50:"Half a hundred", tasks50Desc:"Complete 50 habits.",
-  tasks100:"One hundred", tasks100Desc:"Complete 100 habits.",
-  streak7:"One strong week", streak7Desc:"Reach a 7-day streak.",
-  streak30:"A month of effort", streak30Desc:"Reach a 30-day streak.",
-  streak60:"Two months", streak60Desc:"Reach a 60-day streak.",
-  streak100:"One hundred days", streak100Desc:"Reach a 100-day streak.",
-  firstGoal:"Goal achieved", firstGoalDesc:"Complete your first goal.",
-  allHabits:"Full set", allHabitsDesc:"Complete every habit in one day.",
-  dayNames:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
-  weekdays:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
-  months:["January","February","March","April","May","June","July","August","September","October","November","December"],
-  completed:"Completed", notCompleted:"Not completed",
-  noData:"Not enough data", up:"more", down:"less", same:"no change",
-  day:"day", days:"days", all:"All habits"
+en:{
+habitsTitle:"My Habits",tagline:"Small actions. Consistent progress.",todayProgress:"Completed today",habitsToday:"Today",newHabit:"New habit",habitName:"Name",habitEmoji:"Icon",habitColor:"Color",emptyHabits:"No habits yet. Press + to add one.",habitLimit:"Limit reached: 10 habits.",edit:"Edit",delete:"Delete",deleteConfirm:"Delete this habit? Past history will remain.",addWhat:"What do you want to add?",newGoal:"New goal",goalsButton:"Goals",goalsTitle:"Goals",goalsSubtitle:"Set a goal and track your progress.",goalName:"Goal name",goalType:"Goal type",habitGoal:"Habit goal",quantityGoal:"Quantity goal",linkedHabit:"Linked habit",target:"Target amount",goalUnit:"Unit",goalPeriod:"Period",thisMonth:"This month",allTime:"All time",addGoal:"Add goal",emptyGoals:"No goals yet.",goalLimit:"Limit reached: 5 goals.",goalProgress:"Progress",increase:"+1",decrease:"−1",complete:"Goal completed!",remaining:"Remaining",noHabitsForGoal:"Create a habit first.",statsTitle:"Statistics",statsSubtitle:"Track your progress.",weekRate:"Last 7 days",monthRate:"Last 30 days",weeklyChart:"Results over 7 days",monthlyChart:"Results over 30 days",currentStreak:"Current streak",bestStreak:"Best streak",daysUnit:"days",totalDone:"Total completions",weeklyReport:"Weekly report",productiveDay:"Most productive day",weekComparison:"Compared with last week",calendarTitle:"Calendar",calendarSubtitle:"Choose a date to view results.",calendarLegend:"Colored days show completed habits.",noHabits:"No active habits on this day.",completed:"Completed",notCompleted:"Not completed",noData:"Not enough data",up:"more",down:"less",same:"no change",profileTitle:"Profile",profileSubtitle:"Personalize the app.",nickname:"Your name",language:"App language",theme:"Theme",themeForest:"Dark green",themeAmber:"Amber",themeOcean:"Ocean",sound:"Sounds",saveProfile:"Save profile",profileSaved:"Profile saved!",chooseAvatar:"Choose photo from gallery",removeAvatar:"Remove photo",activeHabits:"Active habits",activeGoals:"Active goals",achievementsTitle:"Achievements",unlockedAchievements:"Achievements unlocked",remindersTitle:"Reminders",remindersDescription:"Up to 3 reminders per day.",reminderTime:"Time",reminderHabit:"Habit",addReminder:"Add reminder",noReminders:"No reminders yet.",reminderLimit:"You can add up to 3 reminders.",reminderSaved:"Reminder added.",notificationsGranted:"Notifications are enabled.",notificationsDenied:"Notifications are blocked in browser settings.",notificationsUnsupported:"This browser does not support notifications.",notificationGeneral:"General reminder",reminderOn:"Enabled",reminderOff:"Disabled",dataTitle:"Backup and data",dataDescription:"Create a backup or restore saved data.",exportData:"Download backup",importData:"Restore from backup",backupSaved:"Backup prepared.",backupRestored:"Data restored.",backupError:"Could not read the backup.",navHabits:"Habits",navCalendar:"Calendar",navStats:"Stats",navProfile:"Profile",save:"Save",cancel:"Cancel",editHabit:"Edit habit",firstAchievement:"First step",firstDescription:"Complete your first habit.",tasks10:"Ten",tasks10Desc:"Complete 10 habits.",tasks50:"Fifty",tasks50Desc:"Complete 50 habits.",tasks100:"One hundred",tasks100Desc:"Complete 100 habits.",streak7:"One strong week",streak7Desc:"Reach a 7-day streak.",streak30:"A month of effort",streak30Desc:"Reach a 30-day streak.",streak60:"Two months",streak60Desc:"Reach a 60-day streak.",streak100:"One hundred days",streak100Desc:"Reach a 100-day streak.",firstGoal:"Goal achieved",firstGoalDesc:"Complete your first goal.",allHabits:"Full set",allHabitsDesc:"Complete every habit in one day.",dayNames:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],weekdays:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],months:["January","February","March","April","May","June","July","August","September","October","November","December"]
+}};
+let habits=[],history={},goals=[],reminders=[],achievements=[];
+let profile={nickname:"",language:"ru",theme:"forest",sound:true,avatar:""};
+let selectedDate=todayKey(),shownMonth=new Date(),audioContext=null;
+function t(k){return (tr[profile.language]||tr.ru)[k] ?? tr.ru[k] ?? k;}
+function activeOn(h,d){return h.created<=d&&(!h.deleted||d<h.deleted);}
+function activeHabits(d=todayKey()){return habits.filter(h=>activeOn(h,d));}
+function dayStats(d){const list=activeHabits(d),rec=history[d]||{},done=list.filter(h=>rec[h.id]===true).length;return {total:list.length,done,rate:list.length?Math.round(done/list.length*100):0};}
+function showNotice(s){const e=$("notice");e.textContent=s;e.hidden=false;clearTimeout(showNotice.timer);showNotice.timer=setTimeout(()=>e.hidden=true,3500);}
+function playSound(kind="check"){if(!profile.sound)return;try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;audioContext=audioContext||new C();if(audioContext.state==="suspended")audioContext.resume();const o=audioContext.createOscillator(),g=audioContext.createGain(),n=audioContext.currentTime;o.connect(g);g.connect(audioContext.destination);o.type="sine";o.frequency.setValueAtTime(kind==="delete"?330:560,n);o.frequency.exponentialRampToValueAtTime(kind==="delete"?220:820,n+.11);g.gain.setValueAtTime(.0001,n);g.gain.exponentialRampToValueAtTime(.1,n+.015);g.gain.exponentialRampToValueAtTime(.0001,n+.17);o.start(n);o.stop(n+.18);}catch{}}
+function saveData(){const b={habits,history,profile,goals,reminders,achievements};try{for(const [k,v] of Object.entries({ht_habits:habits,ht_history:history,ht_profile:profile,ht_goals:goals,ht_reminders:reminders,ht_achievements:achievements,habitTrackerDataV2:b}))localStorage.setItem(k,JSON.stringify(v));return true;}catch{showNotice(profile.language==="ru"?"Не удалось сохранить данные. Возможно, хранилище заполнено.":"Could not save data. Storage may be full.");return false;}}
+function readData(){
+ const legacy=read("habits",[]),v2=read("habitTrackerDataV2",{});
+ let sh=read("ht_habits",null);if(!Array.isArray(sh)&&Array.isArray(v2.habits))sh=v2.habits;
+ if(!Array.isArray(sh))sh=Array.isArray(legacy)?legacy.map(h=>({id:uid("habit"),name:h.name||"",created:todayKey(),deleted:null,emoji:"✨",color:"#7fd69b"})):[];
+ habits=sh.filter(h=>h&&typeof h.name==="string").map(h=>({id:h.id||uid("habit"),name:h.name,created:h.created||h.createdAt||todayKey(),deleted:h.deleted||null,emoji:h.emoji||h.icon||"✨",color:/^#[0-9a-f]{6}$/i.test(h.color||"")?h.color:"#7fd69b"}));
+ history=read("ht_history",v2.history||{});if(!history||typeof history!=="object"||Array.isArray(history))history={};
+ if(!localStorage.getItem("ht_history")&&Array.isArray(legacy)&&legacy.length){history[todayKey()]=history[todayKey()]||{};legacy.forEach((h,i)=>{if(habits[i]&&h.done===true)history[todayKey()][habits[i].id]=true;});}
+ const p=read("ht_profile",v2.profile||{});profile={nickname:p.nickname||"",language:["ru","en"].includes(p.language)?p.language:"ru",theme:["forest","amber","ocean"].includes(p.theme)?p.theme:(p.theme==="amber"||p.theme==="ocean"?p.theme:"forest"),sound:p.sound!==false,avatar:typeof p.avatar==="string"?p.avatar:""};
+ goals=read("ht_goals",Array.isArray(v2.goals)?v2.goals:[]);if(!Array.isArray(goals))goals=[];
+ goals=goals.filter(g=>g&&typeof g.name==="string").slice(0,5).map(g=>({id:g.id||uid("goal"),name:g.name,type:g.type==="habit"?"habit":"quantity",habitId:g.habitId||"",target:Math.max(1,Number(g.target)||1),unit:g.unit||"",period:g.period==="total"?"total":"month",progress:Math.max(0,Number(g.progress)||0),progressByMonth:g.progressByMonth&&typeof g.progressByMonth==="object"?g.progressByMonth:{}}));
+ reminders=read("ht_reminders",Array.isArray(v2.reminders)?v2.reminders:[]);if(!Array.isArray(reminders))reminders=[];
+ reminders=reminders.filter(r=>r&&typeof r.time==="string").slice(0,3).map(r=>({id:r.id||uid("reminder"),time:r.time,habitId:r.habitId||"",enabled:r.enabled!==false,lastFired:r.lastFired||""}));
+ achievements=read("ht_achievements",Array.isArray(v2.achievements)?v2.achievements:[]);if(!Array.isArray(achievements))achievements=[];
 }
-};
-
-let habits = [];
-let history = {};
-let goals = [];
-let reminders = [];
-let achievements = [];
-let profile = {
-  nickname:"",
-  language:"ru",
-  theme:"old",
-  sound:true,
-  avatar:""
-};
-let selectedDate = todayKey();
-let shownMonth = new Date();
-
-function t(key) {
-  const lang = translations[profile.language] || translations.ru;
-  return lang[key] !== undefined ? lang[key] : (translations.ru[key] ?? key);
-}
-
-function activeOn(habit,date) {
-  return habit.created <= date && (!habit.deleted || date < habit.deleted);
-}
-
-function activeHabits(date=todayKey()) {
-  return habits.filter(h => activeOn(h,date));
-}
-
-function dayStats(date) {
-  const list = activeHabits(date);
-  const records = history[date] || {};
-  const done = list.filter(h => records[h.id] === true).length;
-  return {
-    total:list.length,
-    done,
-    rate:list.length ? Math.round(done/list.length*100) : 0
-  };
-}
-
-function readData() {
-  const legacy = read("habits",[]);
-  const v2 = read("habitTrackerDataV2",{});
-
-  let savedHabits = read("ht_habits",null);
-  if (!Array.isArray(savedHabits) && Array.isArray(v2.habits)) {
-    savedHabits = v2.habits;
-  }
-
-  if (!Array.isArray(savedHabits)) {
-    savedHabits = Array.isArray(legacy) ? legacy.map(h => ({
-      id:uid("habit"),
-      name:h.name || "",
-      created:todayKey(),
-      deleted:null,
-      emoji:"✨",
-      color:"#8b7cff"
-    })) : [];
-  }
-
-  habits = savedHabits
-    .filter(h => h && typeof h.name === "string")
-    .map(h => ({
-      id:h.id || uid("habit"),
-      name:h.name,
-      created:h.created || h.createdAt || todayKey(),
-      deleted:h.deleted || null,
-      emoji:h.emoji || h.icon || "✨",
-      color:/^#[0-9a-f]{6}$/i.test(h.color || "") ? h.color : "#8b7cff"
-    }));
-
-  history = read("ht_history",v2.history || {});
-  if (!history || typeof history !== "object" || Array.isArray(history)) history = {};
-
-  if (!localStorage.getItem("ht_history") && Array.isArray(legacy) && legacy.length) {
-    history[todayKey()] = history[todayKey()] || {};
-    legacy.forEach((h,i) => {
-      if (habits[i] && h.done === true) history[todayKey()][habits[i].id] = true;
-    });
-  }
-
-  const savedProfile = read("ht_profile",v2.profile || {});
-  profile = {
-    nickname:savedProfile.nickname || "",
-    language:["ru","en"].includes(savedProfile.language) ? savedProfile.language : "ru",
-    theme:["old","ocean","forest","sunset","amber","light"].includes(savedProfile.theme) ? savedProfile.theme : "old",
-    sound:savedProfile.sound !== false,
-    avatar:typeof savedProfile.avatar === "string" ? savedProfile.avatar : ""
-  };
-
-  goals = read("ht_goals",Array.isArray(v2.goals) ? v2.goals : []);
-  if (!Array.isArray(goals)) goals = [];
-
-  reminders = read("ht_reminders",Array.isArray(v2.reminders) ? v2.reminders : []);
-  if (!Array.isArray(reminders)) reminders = [];
-
-  achievements = read("ht_achievements",Array.isArray(v2.achievements) ? v2.achievements : []);
-  if (!Array.isArray(achievements)) achievements = [];
-
-  goals = goals.filter(g => g && typeof g.name === "string").map(g => ({
-    id:g.id || uid("goal"),
-    name:g.name,
-    type:g.type === "habit" ? "habit" : "quantity",
-    habitId:g.habitId || "",
-    target:Math.max(1,Number(g.target) || 1),
-    unit:g.unit || "",
-    period:g.period === "total" ? "total" : "month",
-    progress:Math.max(0,Number(g.progress) || 0),
-    progressByMonth:g.progressByMonth && typeof g.progressByMonth === "object" ? g.progressByMonth : {}
-  }));
-
-  reminders = reminders.filter(r => r && typeof r.time === "string").map(r => ({
-    id:r.id || uid("reminder"),
-    time:r.time,
-    habitId:r.habitId || "",
-    enabled:r.enabled !== false,
-    lastFired:r.lastFired || ""
-  }));
-}
-
-function saveData() {
-  const bundle = {habits,history,profile,goals,reminders,achievements};
-  try {
-    localStorage.setItem("ht_habits",JSON.stringify(habits));
-    localStorage.setItem("ht_history",JSON.stringify(history));
-    localStorage.setItem("ht_profile",JSON.stringify(profile));
-    localStorage.setItem("ht_goals",JSON.stringify(goals));
-    localStorage.setItem("ht_reminders",JSON.stringify(reminders));
-    localStorage.setItem("ht_achievements",JSON.stringify(achievements));
-    localStorage.setItem("habitTrackerDataV2",JSON.stringify(bundle));
-    return true;
-  } catch (error) {
-    showNotice(profile.language === "ru"
-      ? "Не удалось сохранить данные. Возможно, хранилище переполнено."
-      : "Could not save data. Storage may be full.");
-    return false;
-  }
-}
-
-function showNotice(message) {
-  const el = $("notice");
-  el.textContent = message;
-  el.hidden = false;
-  clearTimeout(showNotice.timer);
-  showNotice.timer = setTimeout(() => { el.hidden = true; },3500);
-}
-
-function applyTheme() {
-  document.documentElement.dataset.theme = profile.theme || "old";
-  document.querySelector('meta[name="theme-color"]').content =
-    profile.theme === "light" ? "#f3f4f8" :
-    profile.theme === "ocean" ? "#0d151b" :
-    profile.theme === "forest" ? "#0e1512" :
-    profile.theme === "sunset" ? "#191114" :
-    profile.theme === "amber" ? "#17140d" : "#101114";
-}
-
-function translate() {
-  document.documentElement.lang = profile.language;
-  document.querySelectorAll("[data-i18n]").forEach(el => {
-    const key = el.dataset.i18n;
-    if (t(key) !== undefined) el.textContent = t(key);
-  });
-  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
-    el.placeholder = t(el.dataset.i18nPlaceholder);
-  });
-  $("language").value = profile.language;
-  $("themeSelect").value = profile.theme;
-  $("soundToggle").checked = profile.sound !== false;
-  applyTheme();
-}
-
-let audioContext = null;
-
-function playSound(kind="check") {
-  if (!profile.sound) return;
-  try {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
-    audioContext = audioContext || new AudioCtx();
-    if (audioContext.state === "suspended") audioContext.resume();
-
-    const oscillator = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    oscillator.connect(gain);
-    gain.connect(audioContext.destination);
-
-    const now = audioContext.currentTime;
-    oscillator.type = "sine";
-    oscillator.frequency.setValueAtTime(kind === "delete" ? 330 : 560,now);
-    oscillator.frequency.exponentialRampToValueAtTime(kind === "delete" ? 220 : 820,now+0.11);
-    gain.gain.setValueAtTime(0.0001,now);
-    gain.gain.exponentialRampToValueAtTime(0.12,now+0.015);
-    gain.gain.exponentialRampToValueAtTime(0.0001,now+0.17);
-    oscillator.start(now);
-    oscillator.stop(now+0.18);
-  } catch {}
-}
-
-function habitDoneOn(habitId,date) {
-  return history[date] && history[date][habitId] === true;
-}
-
-function countCompletions() {
-  let count = 0;
-  Object.values(history).forEach(day => {
-    if (day && typeof day === "object") {
-      count += Object.values(day).filter(v => v === true).length;
-    }
-  });
-  return count;
-}
-
-function allHabitsComplete(date) {
-  const stats = dayStats(date);
-  return stats.total > 0 && stats.done === stats.total;
-}
-
-function currentStreak() {
-  let date = fromKey(todayKey());
-  if (!allHabitsComplete(dateKey(date))) date = shiftDate(date,-1);
-  let count = 0;
-  while (count < 5000 && allHabitsComplete(dateKey(date))) {
-    count++;
-    date = shiftDate(date,-1);
-  }
-  return count;
-}
-
-function bestStreak() {
-  const dates = [];
-  habits.forEach(h => { if (h.created) dates.push(h.created); });
-  Object.keys(history).forEach(k => dates.push(k));
-  if (!dates.length) return 0;
-
-  dates.sort();
-  let date = fromKey(dates[0]);
-  const end = fromKey(todayKey());
-  let run = 0, best = 0, guard = 0;
-
-  while (date <= end && guard < 5000) {
-    if (allHabitsComplete(dateKey(date))) {
-      run++;
-      best = Math.max(best,run);
-    } else {
-      run = 0;
-    }
-    date = shiftDate(date,1);
-    guard++;
-  }
-  return best;
-}
-
-function unlock(id) {
-  if (!achievements.includes(id)) achievements.push(id);
-}
-
-function updateAchievements() {
-  const total = countCompletions();
-  const best = bestStreak();
-
-  if (total >= 1) unlock("first");
-  if (total >= 10) unlock("tasks10");
-  if (total >= 50) unlock("tasks50");
-  if (total >= 100) unlock("tasks100");
-  if (best >= 7) unlock("streak7");
-  if (best >= 30) unlock("streak30");
-  if (best >= 60) unlock("streak60");
-  if (best >= 100) unlock("streak100");
-  if (goals.some(goal => goalProgress(goal).value >= goal.target)) unlock("firstGoal");
-
-  if (allHabitsComplete(todayKey())) unlock("allHabits");
-}
-
-const achievementDefinitions = [
-  {id:"first",icon:"🌱",title:"firstAchievement",description:"firstDescription"},
-  {id:"tasks10",icon:"🔟",title:"tasks10",description:"tasks10Desc"},
-  {id:"tasks50",icon:"⭐",title:"tasks50",description:"tasks50Desc"},
-  {id:"tasks100",icon:"💯",title:"tasks100",description:"tasks100Desc"},
-  {id:"streak7",icon:"🔥",title:"streak7",description:"streak7Desc"},
-  {id:"streak30",icon:"🏅",title:"streak30",description:"streak30Desc"},
-  {id:"streak60",icon:"🥇",title:"streak60",description:"streak60Desc"},
-  {id:"streak100",icon:"👑",title:"streak100",description:"streak100Desc"},
-  {id:"firstGoal",icon:"🎯",title:"firstGoal",description:"firstGoalDesc"},
-  {id:"allHabits",icon:"✅",title:"allHabits",description:"allHabitsDesc"}
-];
-
-function renderHabits() {
-  const list = $("habitList");
-  list.innerHTML = "";
-
-  const active = activeHabits();
-  $("emptyHabits").style.display = active.length ? "none" : "block";
-  $("habitLimitMessage").textContent = active.length >= 10 ? t("habitLimit") : "";
-  $("addHabitButton").disabled = active.length >= 10;
-
-  const records = history[todayKey()] || {};
-
-  active.forEach(habit => {
-    const li = document.createElement("li");
-    li.className = "habit-item" + (records[habit.id] === true ? " done" : "");
-    li.style.setProperty("--habit-color",habit.color);
-
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = records[habit.id] === true;
-    checkbox.setAttribute("aria-label",habit.name);
-    checkbox.addEventListener("change",() => {
-      history[todayKey()] = history[todayKey()] || {};
-      history[todayKey()][habit.id] = checkbox.checked;
-      playSound(checkbox.checked ? "check" : "delete");
-      updateAchievements();
-      saveData();
-      renderAll();
-    });
-
-    const emoji = document.createElement("span");
-    emoji.className = "habit-emoji";
-    emoji.textContent = habit.emoji || "✨";
-
-    const name = document.createElement("span");
-    name.className = "habit-name";
-    name.textContent = habit.name;
-
-    const actions = document.createElement("div");
-    actions.className = "habit-actions";
-
-    const edit = document.createElement("button");
-    edit.type = "button";
-    edit.className = "secondary-button small-button";
-    edit.textContent = "✏️";
-    edit.setAttribute("aria-label",t("edit"));
-    edit.addEventListener("click",() => openEdit(habit));
-
-    const del = document.createElement("button");
-    del.type = "button";
-    del.className = "secondary-button small-button";
-    del.textContent = "×";
-    del.setAttribute("aria-label",t("delete"));
-    del.addEventListener("click",() => {
-      if (!confirm(t("deleteConfirm"))) return;
-      habit.deleted = todayKey();
-      playSound("delete");
-      saveData();
-      renderAll();
-    });
-
-    actions.append(edit,del);
-    li.append(checkbox,emoji,name,actions);
-    list.append(li);
-  });
-
-  const stats = dayStats(todayKey());
-  $("todayCount").textContent = `${stats.done} / ${stats.total}`;
-  $("todayBar").style.width = stats.rate+"%";
-  $("todayPercent").textContent = stats.rate+"%";
-  $("streakSummary").textContent = `${t("currentStreak")}: ${currentStreak()} · ${t("bestStreak")}: ${bestStreak()}`;
-}
-
-function openEdit(habit) {
-  $("editHabitId").value = habit.id;
-  $("editHabitName").value = habit.name;
-  $("editHabitEmoji").value = habit.emoji || "✨";
-  $("editHabitColor").value = habit.color || "#8b7cff";
-  $("editModal").hidden = false;
-}
-
-$("editForm").addEventListener("submit",event => {
-  event.preventDefault();
-  const habit = habits.find(h => h.id === $("editHabitId").value);
-  if (!habit) return;
-
-  const name = $("editHabitName").value.trim();
-  if (!name) return;
-
-  habit.name = name;
-  habit.emoji = $("editHabitEmoji").value.trim() || "✨";
-  habit.color = $("editHabitColor").value || "#8b7cff";
-
-  $("editModal").hidden = true;
-  saveData();
-  renderAll();
-});
-
-$("cancelEdit").addEventListener("click",() => {
-  $("editModal").hidden = true;
-});
-
-$("editModal").addEventListener("click",event => {
-  if (event.target === $("editModal")) $("editModal").hidden = true;
-});
-
-$("habitForm").addEventListener("submit",event => {
-  event.preventDefault();
-  const name = $("habitInput").value.trim();
-  if (!name) return;
-
-  if (activeHabits().length >= 10) {
-    showNotice(t("habitLimit"));
-    return;
-  }
-
-  habits.push({
-    id:uid("habit"),
-    name,
-    emoji:$("habitEmoji").value.trim() || "✨",
-    color:$("habitColor").value || "#8b7cff",
-    created:todayKey(),
-    deleted:null
-  });
-
-  $("habitInput").value = "";
-  $("habitEmoji").value = "✨";
-  playSound("check");
-  saveData();
-  renderAll();
-});
-
-function periodRate(days) {
-  let done = 0, total = 0;
-  const today = fromKey(todayKey());
-  for (let i=days-1;i>=0;i--) {
-    const stats = dayStats(dateKey(shiftDate(today,-i)));
-    done += stats.done;
-    total += stats.total;
-  }
-  return total ? Math.round(done/total*100) : 0;
-}
-
-function periodCompletions(daysBack,count) {
-  let total = 0;
-  const today = fromKey(todayKey());
-  for (let i=daysBack;i<daysBack+count;i++) {
-    const key = dateKey(shiftDate(today,-i));
-    const day = history[key] || {};
-    total += Object.values(day).filter(v => v === true).length;
-  }
-  return total;
-}
-
-function renderChart(containerId,days) {
-  const container = $(containerId);
-  container.innerHTML = "";
-  const today = fromKey(todayKey());
-
-  for (let i=days-1;i>=0;i--) {
-    const date = shiftDate(today,-i);
-    const key = dateKey(date);
-    const stats = dayStats(key);
-
-    const column = document.createElement("div");
-    column.className = "chart-column";
-
-    const area = document.createElement("div");
-    area.className = "chart-bar-area";
-
-    const bar = document.createElement("div");
-    bar.className = "chart-bar";
-    bar.style.height = stats.rate+"%";
-    bar.title = `${stats.done}/${stats.total}`;
-
-    const label = document.createElement("span");
-    label.className = "chart-label";
-    label.textContent = days === 7
-      ? date.toLocaleDateString(profile.language === "ru" ? "ru-RU" : "en-US",{weekday:"short"}).replace(".","")
-      : String(date.getDate());
-
-    area.append(bar);
-    column.append(area,label);
-    container.append(column);
-  }
-}
-
-function renderStats() {
-  const week = periodRate(7);
-  const month = periodRate(30);
-
-  $("weekRate").textContent = week+"%";
-  $("weekBar").style.width = week+"%";
-  $("monthRate").textContent = month+"%";
-  $("monthBar").style.width = month+"%";
-
-  $("currentStreak").textContent = currentStreak();
-  $("bestStreak").textContent = bestStreak();
-  $("totalDone").textContent = countCompletions();
-
-  renderChart("weeklyChart",7);
-  renderChart("monthlyChart",30);
-
-  let best = null;
-  const today = fromKey(todayKey());
-
-  for (let i=0;i<7;i++) {
-    const date = shiftDate(today,-i);
-    const stats = dayStats(dateKey(date));
-    if (stats.total && (!best || stats.done > best.done)) {
-      best = {date,done:stats.done,total:stats.total};
-    }
-  }
-
-  $("productiveDay").textContent = best
-    ? best.date.toLocaleDateString(profile.language === "ru" ? "ru-RU" : "en-US",{weekday:"short",day:"numeric",month:"short"})
-      + ` (${best.done}/${best.total})`
-    : t("noData");
-
-  const currentWeek = periodCompletions(0,7);
-  const previousWeek = periodCompletions(7,7);
-  const difference = currentWeek-previousWeek;
-
-  if (difference > 0) {
-    $("weekComparison").textContent = `+${difference} (${t("up")})`;
-  } else if (difference < 0) {
-    $("weekComparison").textContent = `${difference} (${t("down")})`;
-  } else {
-    $("weekComparison").textContent = t("same");
-  }
-}
-
-function renderCalendar() {
-  const lang = translations[profile.language] || translations.ru;
-  const year = shownMonth.getFullYear();
-  const month = shownMonth.getMonth();
-
-  $("monthLabel").textContent = lang.months[month]+" "+year;
-
-  const weekdays = $("weekdays");
-  weekdays.innerHTML = "";
-  lang.weekdays.forEach(day => {
-    const el = document.createElement("div");
-    el.className = "weekday";
-    el.textContent = day;
-    weekdays.append(el);
-  });
-
-  const grid = $("calendarGrid");
-  grid.innerHTML = "";
-
-  const first = new Date(year,month,1);
-  const offset = (first.getDay()+6)%7;
-  const days = new Date(year,month+1,0).getDate();
-
-  for (let i=0;i<offset;i++) {
-    const empty = document.createElement("div");
-    empty.className = "calendar-day empty";
-    grid.append(empty);
-  }
-
-  for (let day=1;day<=days;day++) {
-    const date = new Date(year,month,day);
-    const key = dateKey(date);
-    const stats = dayStats(key);
-
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "calendar-day";
-    button.textContent = day;
-
-    if (key === todayKey()) button.classList.add("today");
-    if (key === selectedDate) button.classList.add("selected");
-    if (stats.done > 0) {
-      button.classList.add(stats.total && stats.done === stats.total ? "complete" : "has-progress");
-    }
-
-    button.addEventListener("click",() => {
-      selectedDate = key;
-      renderCalendar();
-    });
-
-    grid.append(button);
-  }
-
-  const stats = dayStats(selectedDate);
-  $("selectedDateTitle").textContent = fromKey(selectedDate).toLocaleDateString(
-    profile.language === "ru" ? "ru-RU" : "en-US",
-    {year:"numeric",month:"long",day:"numeric"}
-  );
-  $("selectedDateCount").textContent = `${stats.done} / ${stats.total}`;
-  $("selectedDateBar").style.width = stats.rate+"%";
-
-  const area = $("selectedDateHabits");
-  area.innerHTML = "";
-  const list = habits.filter(h => activeOn(h,selectedDate));
-
-  if (!list.length) {
-    area.textContent = t("noHabits");
-    return;
-  }
-
-  list.forEach(habit => {
-    const p = document.createElement("p");
-    const completed = habitDoneOn(habit.id,selectedDate);
-    p.textContent = `${completed ? "✓" : "○"} ${habit.emoji || "✨"} ${habit.name} · ${completed ? t("completed") : t("notCompleted")}`;
-    area.append(p);
-  });
-}
-
-function goalProgress(goal) {
-  let value = 0;
-
-  if (goal.type === "habit") {
-    const habit = habits.find(h => h.id === goal.habitId);
-    if (!habit) return {value:0,target:goal.target};
-
-    const today = fromKey(todayKey());
-    const start = goal.period === "month"
-      ? new Date(today.getFullYear(),today.getMonth(),1)
-      : fromKey(habit.created || todayKey());
-
-    for (let date=new Date(start);date<=today;date=shiftDate(date,1)) {
-      const key = dateKey(date);
-      if (activeOn(habit,key) && habitDoneOn(habit.id,key)) value++;
-    }
-  } else if (goal.period === "month") {
-    value = Number(goal.progressByMonth[monthKey(new Date())]) || 0;
-  } else {
-    value = Number(goal.progress) || 0;
-  }
-
-  return {value,target:goal.target};
-}
-
-function renderGoalHabitOptions() {
-  const select = $("goalHabit");
-  const previous = select.value;
-  select.innerHTML = "";
-
-  activeHabits().forEach(habit => {
-    const option = document.createElement("option");
-    option.value = habit.id;
-    option.textContent = `${habit.emoji || "✨"} ${habit.name}`;
-    select.append(option);
-  });
-
-  if ([...select.options].some(o => o.value === previous)) select.value = previous;
-
-  const isHabitGoal = $("goalType").value === "habit";
-  $("goalHabitField").style.display = isHabitGoal ? "grid" : "none";
-}
-
+function applyTheme(){document.documentElement.dataset.theme=profile.theme;document.querySelector('meta[name="theme-color"]').content=profile.theme==="ocean"?"#0d151b":profile.theme==="amber"?"#17140d":"#0e1512";}
+function translate(){document.documentElement.lang=profile.language;document.querySelectorAll("[data-i18n]").forEach(e=>{e.textContent=t(e.dataset.i18n);});$("language").value=profile.language;$("themeSelect").value=profile.theme;$("soundToggle").checked=profile.sound;applyTheme();}
+function habitDoneOn(id,d){return !!(history[d]&&history[d][id]===true);}
+function countCompletions(){let n=0;Object.values(history).forEach(day=>{if(day&&typeof day==="object")n+=Object.values(day).filter(v=>v===true).length;});return n;}
+function allHabitsComplete(d){const s=dayStats(d);return s.total>0&&s.done===s.total;}
+function currentStreak(){let d=fromKey(todayKey());if(!allHabitsComplete(dateKey(d)))d=shiftDate(d,-1);let n=0;while(n<5000&&allHabitsComplete(dateKey(d))){n++;d=shiftDate(d,-1);}return n;}
+function bestStreak(){const dates=habits.map(h=>h.created).concat(Object.keys(history)).filter(Boolean).sort();if(!dates.length)return 0;let d=fromKey(dates[0]),end=fromKey(todayKey()),run=0,best=0,guard=0;while(d<=end&&guard++<5000){if(allHabitsComplete(dateKey(d))){run++;best=Math.max(best,run);}else run=0;d=shiftDate(d,1);}return best;}
+function goalProgress(g){let value=0;if(g.type==="habit"){const h=habits.find(x=>x.id===g.habitId);if(!h)return {value:0,target:g.target};const now=fromKey(todayKey()),start=g.period==="month"?new Date(now.getFullYear(),now.getMonth(),1):fromKey(h.created||todayKey());for(let d=new Date(start);d<=now;d=shiftDate(d,1)){const k=dateKey(d);if(activeOn(h,k)&&habitDoneOn(h.id,k))value++;}}else if(g.period==="month")value=Number(g.progressByMonth[monthKey(new Date())])||0;else value=Number(g.progress)||0;return {value,target:g.target};}
+function unlock(id){if(!achievements.includes(id))achievements.push(id);}
+const achievementDefs=[["first","🌱","firstAchievement","firstDescription"],["tasks10","🔟","tasks10","tasks10Desc"],["tasks50","⭐","tasks50","tasks50Desc"],["tasks100","💯","tasks100","tasks100Desc"],["streak7","🔥","streak7","streak7Desc"],["streak30","🏅","streak30","streak30Desc"],["streak60","🥇","streak60","streak60Desc"],["streak100","👑","streak100","streak100Desc"],["firstGoal","🎯","firstGoal","firstGoalDesc"],["allHabits","✅","allHabits","allHabitsDesc"]];
+function updateAchievements(){const n=countCompletions(),s=bestStreak();if(n>=1)unlock("first");if(n>=10)unlock("tasks10");if(n>=50)unlock("tasks50");if(n>=100)unlock("tasks100");if(s>=7)unlock("streak7");if(s>=30)unlock("streak30");if(s>=60)unlock("streak60");if(s>=100)unlock("streak100");if(goals.some(g=>goalProgress(g).value>=g.target))unlock("firstGoal");if(allHabitsComplete(todayKey()))unlock("allHabits");}
+function openModal(id){$(id).hidden=false;}
+function closeModal(id){$(id).hidden=true;}
+function openHabitForm(h=null){$("habitForm").reset();$("editHabitId").value=h?h.id:"";$("habitInput").value=h?h.name:"";$("habitEmoji").value=h?h.emoji:"✨";$("habitColor").value=h?h.color:"#7fd69b";$("habitModalTitle").textContent=h?t("editHabit"):t("newHabit");$("addHabitButton").textContent=h?t("save"):t("add");$("habitLimitMessage").textContent=!h&&activeHabits().length>=10?t("habitLimit"):"";$("addHabitButton").disabled=!h&&activeHabits().length>=10;closeModal("addModal");openModal("habitModal");}
+function renderHabits(){const list=$("habitList");list.innerHTML="";const active=activeHabits(),records=history[todayKey()]||{};$("emptyHabits").hidden=active.length>0;active.forEach(h=>{const li=document.createElement("li");li.className="habit-item"+(records[h.id]===true?" done":"");li.style.setProperty("--habit-color",h.color);const cb=document.createElement("input");cb.type="checkbox";cb.checked=records[h.id]===true;cb.setAttribute("aria-label",h.name);cb.addEventListener("change",()=>{history[todayKey()]=history[todayKey()]||{};history[todayKey()][h.id]=cb.checked;playSound(cb.checked?"check":"delete");updateAchievements();saveData();renderAll();});const emoji=document.createElement("span");emoji.className="habit-emoji";emoji.textContent=h.emoji;const name=document.createElement("span");name.className="habit-name";name.textContent=h.name;const actions=document.createElement("div");actions.className="habit-actions";const edit=document.createElement("button");edit.className="secondary-button small-button";edit.type="button";edit.textContent="⋯";edit.setAttribute("aria-label",t("edit"));edit.onclick=()=>openEdit(h);const del=document.createElement("button");del.className="secondary-button small-button";del.type="button";del.textContent="×";del.setAttribute("aria-label",t("delete"));del.onclick=()=>{if(!confirm(t("deleteConfirm")))return;h.deleted=todayKey();playSound("delete");saveData();renderAll();};actions.append(edit,del);li.append(cb,emoji,name,actions);list.append(li);});const s=dayStats(todayKey());$("todayCount").textContent=`${s.done} / ${s.total}`;$("todayBar").style.width=s.rate+"%";$("todayPercent").textContent=s.rate+"%";$("streakSummary").textContent=`${t("currentStreak")}: ${currentStreak()} · ${t("bestStreak")}: ${bestStreak()}`;$("profileHabitCount").textContent=`${active.length} / 10`;}
+function openEdit(h){$("editId").value=h.id;$("editName").value=h.name;$("editEmoji").value=h.emoji;$("editColor").value=h.color;openModal("editModal");}
+$("editForm").addEventListener("submit",e=>{e.preventDefault();const h=habits.find(x=>x.id===$("editId").value),name=$("editName").value.trim();if(!h||!name)return;h.name=name;h.emoji=$("editEmoji").value.trim()||"✨";h.color=$("editColor").value;closeModal("editModal");saveData();renderAll();});
+$("cancelEdit").onclick=()=>closeModal("editModal");
+$("habitForm").addEventListener("submit",e=>{e.preventDefault();const name=$("habitInput").value.trim();if(!name)return;const id=$("editHabitId").value;if(id){const h=habits.find(x=>x.id===id);if(h){h.name=name;h.emoji=$("habitEmoji").value.trim()||"✨";h.color=$("habitColor").value;}}else{if(activeHabits().length>=10){showNotice(t("habitLimit"));return;}habits.push({id:uid("habit"),name,emoji:$("habitEmoji").value.trim()||"✨",color:$("habitColor").value||"#7fd69b",created:todayKey(),deleted:null});}closeModal("habitModal");playSound("check");saveData();renderAll();});
+function periodRate(days){let done=0,total=0,now=fromKey(todayKey());for(let i=days-1;i>=0;i--){const s=dayStats(dateKey(shiftDate(now,-i)));done+=s.done;total+=s.total;}return total?Math.round(done/total*100):0;}
+function periodCompletions(back,count){let n=0,now=fromKey(todayKey());for(let i=back;i<back+count;i++){const d=history[dateKey(shiftDate(now,-i))]||{};n+=Object.values(d).filter(v=>v===true).length;}return n;}
+function renderChart(id,days){const el=$(id);el.innerHTML="";const now=fromKey(todayKey());for(let i=days-1;i>=0;i--){const d=shiftDate(now,-i),s=dayStats(dateKey(d)),col=document.createElement("div");col.className="chart-column";const area=document.createElement("div");area.className="chart-bar-area";const bar=document.createElement("div");bar.className="chart-bar";bar.style.height=s.rate+"%";bar.title=`${s.done}/${s.total}`;const label=document.createElement("span");label.className="chart-label";label.textContent=days===7?d.toLocaleDateString(profile.language==="ru"?"ru-RU":"en-US",{weekday:"short"}).replace(".",""):String(d.getDate());area.append(bar);col.append(area,label);el.append(col);}}
+function renderStats(){const w=periodRate(7),m=periodRate(30);$("weekRate").textContent=w+"%";$("weekBar").style.width=w+"%";$("monthRate").textContent=m+"%";$("monthBar").style.width=m+"%";$("currentStreak").textContent=currentStreak();$("bestStreak").textContent=bestStreak();$("totalDone").textContent=countCompletions();renderChart("weeklyChart",7);renderChart("monthlyChart",30);let best=null,now=fromKey(todayKey());for(let i=0;i<7;i++){const d=shiftDate(now,-i),s=dayStats(dateKey(d));if(s.total&&(!best||s.done>best.done))best={date:d,done:s.done,total:s.total};}$("productiveDay").textContent=best?best.date.toLocaleDateString(profile.language==="ru"?"ru-RU":"en-US",{weekday:"short",day:"numeric",month:"short"})+` (${best.done}/${best.total})`:t("noData");const diff=periodCompletions(0,7)-periodCompletions(7,7);$("weekComparison").textContent=diff>0?`+${diff} (${t("up")})`:diff<0?`${diff} (${t("down")})`:t("same");}
+function renderCalendar(){const lang=tr[profile.language],y=shownMonth.getFullYear(),m=shownMonth.getMonth();$("monthLabel").textContent=lang.months[m]+" "+y;$("weekdays").innerHTML="";lang.weekdays.forEach(d=>{const el=document.createElement("div");el.className="weekday";el.textContent=d;$("weekdays").append(el);});const grid=$("calendarGrid");grid.innerHTML="";const first=new Date(y,m,1),offset=(first.getDay()+6)%7,days=new Date(y,m+1,0).getDate();for(let i=0;i<offset;i++){const e=document.createElement("div");e.className="calendar-day empty";grid.append(e);}for(let day=1;day<=days;day++){const d=new Date(y,m,day),k=dateKey(d),s=dayStats(k),b=document.createElement("button");b.type="button";b.className="calendar-day";b.textContent=day;if(k===todayKey())b.classList.add("today");if(k===selectedDate)b.classList.add("selected");if(s.done>0)b.classList.add(s.total&&s.done===s.total?"complete":"has-progress");b.onclick=()=>{selectedDate=k;renderCalendar();};grid.append(b);}const s=dayStats(selectedDate);$("selectedDateTitle").textContent=fromKey(selectedDate).toLocaleDateString(profile.language==="ru"?"ru-RU":"en-US",{year:"numeric",month:"long",day:"numeric"});$("selectedDateCount").textContent=`${s.done} / ${s.total}`;$("selectedDateBar").style.width=s.rate+"%";const area=$("selectedDateHabits");area.innerHTML="";const list=habits.filter(h=>activeOn(h,selectedDate));if(!list.length){area.textContent=t("noHabits");return;}list.forEach(h=>{const p=document.createElement("p"),done=habitDoneOn(h.id,selectedDate);p.textContent=`${done?"✓":"○"} ${h.emoji} ${h.name} · ${done?t("completed"):t("notCompleted")}`;area.append(p);});}
+function renderGoalHabitOptions(){const sel=$("goalHabit"),old=sel.value;sel.innerHTML="";activeHabits().forEach(h=>{const o=document.createElement("option");o.value=h.id;o.textContent=`${h.emoji} ${h.name}`;sel.append(o);});if([...sel.options].some(o=>o.value===old))sel.value=old;$("goalHabitField").style.display=$("goalType").value==="habit"?"grid":"none";}
 $("goalType").addEventListener("change",renderGoalHabitOptions);
-
-$("goalForm").addEventListener("submit",event => {
-  event.preventDefault();
-
-  if (goals.length >= 5) {
-    showNotice(t("goalLimit"));
-    return;
-  }
-
-  const name = $("goalName").value.trim();
-  const type = $("goalType").value;
-  const target = Number($("goalTarget").value);
-  const unit = $("goalUnit").value.trim();
-  const period = $("goalPeriod").value;
-  const habitId = $("goalHabit").value;
-
-  if (!name || !Number.isFinite(target) || target < 1 || target > 100000) return;
-
-  if (type === "habit" && !activeHabits().some(h => h.id === habitId)) {
-    showNotice(t("noHabitsForGoal"));
-    return;
-  }
-
-  goals.push({
-    id:uid("goal"),
-    name,
-    type,
-    habitId:type === "habit" ? habitId : "",
-    target,
-    unit,
-    period,
-    progress:0,
-    progressByMonth:{}
-  });
-
-  $("goalName").value = "";
-  $("goalTarget").value = "5";
-  $("goalUnit").value = "";
-
-  playSound("check");
-  saveData();
-  updateAchievements();
-  renderAll();
-});
-
-function renderGoals() {
-  const list = $("goalList");
-  list.innerHTML = "";
-  $("emptyGoals").style.display = goals.length ? "none" : "block";
-  $("goalLimitMessage").textContent = goals.length >= 5 ? t("goalLimit") : "";
-  $("addGoalButton").disabled = goals.length >= 5;
-
-  goals.forEach(goal => {
-    const progress = goalProgress(goal);
-    const percent = Math.min(100,Math.round(progress.value/progress.target*100));
-
-    const card = document.createElement("div");
-    card.className = "goal-card";
-
-    const header = document.createElement("div");
-    header.className = "goal-header";
-
-    const title = document.createElement("strong");
-    title.textContent = goal.name;
-
-    const deleteButton = document.createElement("button");
-    deleteButton.type = "button";
-    deleteButton.className = "secondary-button small-button";
-    deleteButton.textContent = "×";
-    deleteButton.setAttribute("aria-label",t("deleteGoal"));
-    deleteButton.addEventListener("click",() => {
-      if (!confirm(t("deleteGoalConfirm"))) return;
-      goals = goals.filter(g => g.id !== goal.id);
-      saveData();
-      renderAll();
-    });
-
-    header.append(title,deleteButton);
-
-    const count = document.createElement("p");
-    count.textContent = `${t("goalProgress")}: ${progress.value} / ${progress.target} ${goal.unit || ""}`;
-
-    const track = document.createElement("div");
-    track.className = "progress-track";
-
-    const fill = document.createElement("div");
-    fill.className = "progress-fill";
-    fill.style.width = percent+"%";
-    track.append(fill);
-
-    const status = document.createElement("p");
-    status.textContent = percent >= 100 ? t("complete") : `${t("remaining")}: ${Math.max(0,progress.target-progress.value)}`;
-
-    card.append(header,count,track,status);
-
-    if (goal.type === "quantity" && progress.value < progress.target) {
-      const actions = document.createElement("div");
-      actions.className = "goal-actions";
-
-      const plus = document.createElement("button");
-      plus.type = "button";
-      plus.className = "small-button";
-      plus.textContent = t("increase");
-      plus.addEventListener("click",() => {
-        if (goal.period === "month") {
-          const key = monthKey(new Date());
-          goal.progressByMonth[key] = (Number(goal.progressByMonth[key]) || 0)+1;
-        } else {
-          goal.progress = (Number(goal.progress) || 0)+1;
-        }
-        playSound("check");
-        updateAchievements();
-        saveData();
-        renderAll();
-      });
-
-      const minus = document.createElement("button");
-      minus.type = "button";
-      minus.className = "secondary-button small-button";
-      minus.textContent = t("decrease");
-      minus.addEventListener("click",() => {
-        if (goal.period === "month") {
-          const key = monthKey(new Date());
-          goal.progressByMonth[key] = Math.max(0,(Number(goal.progressByMonth[key]) || 0)-1);
-        } else {
-          goal.progress = Math.max(0,(Number(goal.progress) || 0)-1);
-        }
-        saveData();
-        renderAll();
-      });
-
-      actions.append(plus,minus);
-      card.append(actions);
-    }
-
-    list.append(card);
-  });
-}
-
-function renderAchievements() {
-  const list = $("achievementList");
-  list.innerHTML = "";
-
-  const unlocked = achievementDefinitions.filter(a => achievements.includes(a.id)).length;
-  $("achievementCount").textContent = `${unlocked} / ${achievementDefinitions.length}`;
-  $("achievementBar").style.width = (unlocked/achievementDefinitions.length*100)+"%";
-
-  achievementDefinitions.forEach(def => {
-    const card = document.createElement("div");
-    card.className = "achievement-card" + (achievements.includes(def.id) ? "" : " locked");
-
-    const icon = document.createElement("span");
-    icon.className = "achievement-icon";
-    icon.textContent = def.icon;
-
-    const text = document.createElement("div");
-    const title = document.createElement("strong");
-    title.textContent = t(def.title);
-    const description = document.createElement("p");
-    description.textContent = t(def.description);
-    description.style.margin = "5px 0 0";
-
-    text.append(title,description);
-
-    const status = document.createElement("span");
-    status.className = "badge";
-    status.textContent = achievements.includes(def.id) ? "✓" : "🔒";
-
-    card.append(icon,text,status);
-    list.append(card);
-  });
-}
-
-function renderAvatar() {
-  const area = $("avatarDisplay");
-  area.innerHTML = "";
-
-  if (profile.avatar) {
-    const image = document.createElement("img");
-    image.className = "profile-avatar";
-    image.src = profile.avatar;
-    image.alt = profile.nickname || "Avatar";
-    area.append(image);
-  } else {
-    const placeholder = document.createElement("div");
-    placeholder.className = "avatar-placeholder";
-    placeholder.textContent = "👤";
-    area.append(placeholder);
-  }
-
-  $("removeAvatar").style.display = profile.avatar ? "block" : "none";
-}
-
-function renderProfile() {
-  $("nickname").value = profile.nickname || "";
-  $("language").value = profile.language;
-  $("themeSelect").value = profile.theme;
-  $("soundToggle").checked = profile.sound !== false;
-  $("profileHabitCount").textContent = `${activeHabits().length} / 10`;
-  $("profileGoalCount").textContent = `${goals.length} / 5`;
-  renderAvatar();
-  renderReminders();
-  renderGoalHabitOptions();
-  renderReminderHabitOptions();
-}
-
-function renderReminderHabitOptions() {
-  const select = $("reminderHabit");
-  const previous = select.value;
-  select.innerHTML = "";
-
-  const general = document.createElement("option");
-  general.value = "";
-  general.textContent = t("notificationGeneral");
-  select.append(general);
-
-  activeHabits().forEach(habit => {
-    const option = document.createElement("option");
-    option.value = habit.id;
-    option.textContent = `${habit.emoji || "✨"} ${habit.name}`;
-    select.append(option);
-  });
-
-  if ([...select.options].some(o => o.value === previous)) select.value = previous;
-}
-
-function renderReminders() {
-  const list = $("reminderList");
-  list.innerHTML = "";
-  $("addReminderButton").disabled = reminders.length >= 3;
-
-  if (!reminders.length) {
-    const empty = document.createElement("p");
-    empty.textContent = t("noReminders");
-    list.append(empty);
-  }
-
-  reminders.forEach(reminder => {
-    const card = document.createElement("div");
-    card.className = "reminder-card";
-
-    const row = document.createElement("div");
-    row.className = "inline-row";
-
-    const text = document.createElement("div");
-    const title = document.createElement("strong");
-    title.textContent = reminder.time;
-
-    const description = document.createElement("p");
-    const habit = habits.find(h => h.id === reminder.habitId);
-    description.textContent = habit ? habit.name : t("notificationGeneral");
-    description.style.margin = "5px 0 0";
-
-    text.append(title,description);
-
-    const controls = document.createElement("div");
-    controls.style.display = "flex";
-    controls.style.gap = "6px";
-
-    const toggle = document.createElement("button");
-    toggle.type = "button";
-    toggle.className = "secondary-button small-button";
-    toggle.textContent = reminder.enabled ? t("reminderOn") : t("reminderOff");
-    toggle.addEventListener("click",() => {
-      reminder.enabled = !reminder.enabled;
-      saveData();
-      renderReminders();
-    });
-
-    const del = document.createElement("button");
-    del.type = "button";
-    del.className = "secondary-button small-button";
-    del.textContent = "×";
-    del.addEventListener("click",() => {
-      reminders = reminders.filter(r => r.id !== reminder.id);
-      saveData();
-      renderReminders();
-    });
-
-    controls.append(toggle,del);
-    row.append(text,controls);
-    card.append(row);
-    list.append(card);
-  });
-
-  if (!("Notification" in window)) {
-    $("notificationStatus").textContent = t("notificationsUnsupported");
-  } else if (Notification.permission === "granted") {
-    $("notificationStatus").textContent = t("notificationsGranted");
-  } else if (Notification.permission === "denied") {
-    $("notificationStatus").textContent = t("notificationsDenied");
-  } else {
-    $("notificationStatus").textContent = profile.language === "ru"
-      ? "Разреши уведомления браузера, когда он запросит доступ."
-      : "Allow browser notifications when prompted.";
-  }
-}
-
-$("saveProfile").addEventListener("click",() => {
-  profile.nickname = $("nickname").value.trim();
-  profile.language = $("language").value;
-  profile.theme = $("themeSelect").value;
-  profile.sound = $("soundToggle").checked;
-
-  saveData();
-  translate();
-  renderAll();
-  $("profileMessage").textContent = t("profileSaved");
-});
-
-$("language").addEventListener("change",() => {
-  profile.language = $("language").value;
-  saveData();
-  translate();
-  renderAll();
-});
-
-$("themeSelect").addEventListener("change",() => {
-  profile.theme = $("themeSelect").value;
-  applyTheme();
-  saveData();
-});
-
-$("soundToggle").addEventListener("change",() => {
-  profile.sound = $("soundToggle").checked;
-  saveData();
-  if (profile.sound) playSound("check");
-});
-
-$("chooseAvatar").addEventListener("click",() => $("avatarInput").click());
-
-$("avatarInput").addEventListener("change",event => {
-  const file = event.target.files && event.target.files[0];
-  if (!file) return;
-
-  if (!file.type.startsWith("image/")) {
-    showNotice(profile.language === "ru" ? "Выбери файл изображения." : "Choose an image file.");
-    return;
-  }
-
-  const reader = new FileReader();
-
-  reader.onload = () => {
-    const image = new Image();
-
-    image.onload = () => {
-      try {
-        const maxSize = 320;
-        const scale = Math.min(1,maxSize/Math.max(image.width,image.height));
-        const canvas = document.createElement("canvas");
-        canvas.width = Math.max(1,Math.round(image.width*scale));
-        canvas.height = Math.max(1,Math.round(image.height*scale));
-
-        const context = canvas.getContext("2d");
-        context.drawImage(image,0,0,canvas.width,canvas.height);
-
-        profile.avatar = canvas.toDataURL("image/jpeg",0.78);
-        saveData();
-        renderAvatar();
-        showNotice(profile.language === "ru" ? "Аватар сохранён." : "Avatar saved.");
-      } catch {
-        showNotice(profile.language === "ru"
-          ? "Не удалось обработать изображение."
-          : "Could not process the image.");
-      }
-    };
-
-    image.onerror = () => showNotice(profile.language === "ru"
-      ? "Не удалось открыть изображение."
-      : "Could not open the image.");
-
-    image.src = reader.result;
-  };
-
-  reader.onerror = () => showNotice(profile.language === "ru"
-    ? "Не удалось прочитать файл."
-    : "Could not read the file.");
-
-  reader.readAsDataURL(file);
-  event.target.value = "";
-});
-
-$("removeAvatar").addEventListener("click",() => {
-  profile.avatar = "";
-  saveData();
-  renderAvatar();
-});
-
-$("prevMonth").addEventListener("click",() => {
-  shownMonth = new Date(shownMonth.getFullYear(),shownMonth.getMonth()-1,1);
-  renderCalendar();
-});
-
-$("nextMonth").addEventListener("click",() => {
-  shownMonth = new Date(shownMonth.getFullYear(),shownMonth.getMonth()+1,1);
-  renderCalendar();
-});
-
-document.querySelectorAll(".nav-button").forEach(button => {
-  button.addEventListener("click",() => {
-    document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));
-    document.querySelectorAll(".nav-button").forEach(nav => nav.classList.remove("active"));
-
-    $("page-"+button.dataset.page).classList.add("active");
-    button.classList.add("active");
-    window.scrollTo(0,0);
-  });
-});
-
-$("reminderForm").addEventListener("submit",async event => {
-  event.preventDefault();
-
-  if (reminders.length >= 3) {
-    showNotice(t("reminderLimit"));
-    return;
-  }
-
-  if ("Notification" in window && Notification.permission === "default") {
-    try { await Notification.requestPermission(); } catch {}
-  }
-
-  reminders.push({
-    id:uid("reminder"),
-    time:$("reminderTime").value,
-    habitId:$("reminderHabit").value,
-    enabled:true,
-    lastFired:""
-  });
-
-  saveData();
-  renderReminders();
-  showNotice(t("reminderSaved"));
-});
-
-async function checkReminders() {
-  if (!reminders.length) return;
-
-  const now = new Date();
-  const currentTime = `${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
-  const today = todayKey();
-
-  for (const reminder of reminders) {
-    if (!reminder.enabled || reminder.time !== currentTime || reminder.lastFired === today) continue;
-
-    reminder.lastFired = today;
-    const habit = habits.find(h => h.id === reminder.habitId);
-    const message = habit ? habit.name : t("notificationGeneral");
-    const title = "Habit Tracker";
-
-    if ("Notification" in window && Notification.permission === "granted") {
-      try {
-        const registration = "serviceWorker" in navigator
-          ? await navigator.serviceWorker.getRegistration()
-          : null;
-
-        if (registration && registration.showNotification) {
-          await registration.showNotification(title,{body:message,icon:"./icon.svg"});
-        } else {
-          new Notification(title,{body:message});
-        }
-      } catch {
-        showNotice(`${title}: ${message}`);
-      }
-    } else {
-      showNotice(`${title}: ${message}`);
-    }
-
-    saveData();
-  }
-}
-
-function exportBackup() {
-  const data = {
-    app:"Habit Tracker",
-    version:4,
-    exportedAt:new Date().toISOString(),
-    habits,history,profile,goals,reminders,achievements
-  };
-
-  const blob = new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `habit-tracker-backup-${todayKey()}.json`;
-  document.body.append(link);
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(url),1000);
-  showNotice(t("backupSaved"));
-}
-
-$("exportButton").addEventListener("click",exportBackup);
-$("importButton").addEventListener("click",() => $("importInput").click());
-
-$("importInput").addEventListener("change",event => {
-  const file = event.target.files && event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-
-  reader.onload = () => {
-    try {
-      const data = JSON.parse(reader.result);
-
-      if (!data || typeof data !== "object" ||
-          !Array.isArray(data.habits) || !data.history ||
-          typeof data.history !== "object") {
-        throw new Error("Invalid backup");
-      }
-
-      if (!confirm(profile.language === "ru"
-        ? "Заменить текущие данные данными из резервной копии?"
-        : "Replace current data with the backup?")) return;
-
-      habits = data.habits;
-      history = data.history;
-      profile = {...profile,...(data.profile || {})};
-      goals = Array.isArray(data.goals) ? data.goals : [];
-      reminders = Array.isArray(data.reminders) ? data.reminders : [];
-      achievements = Array.isArray(data.achievements) ? data.achievements : [];
-
-      readDataNormalizeAfterImport();
-      updateAchievements();
-      saveData();
-      translate();
-      renderAll();
-      showNotice(t("backupRestored"));
-    } catch {
-      showNotice(t("backupError"));
-    } finally {
-      event.target.value = "";
-    }
-  };
-
-  reader.readAsText(file);
-});
-
-function readDataNormalizeAfterImport() {
-  habits = habits.filter(h => h && typeof h.name === "string").map(h => ({
-    id:h.id || uid("habit"),
-    name:h.name,
-    created:h.created || todayKey(),
-    deleted:h.deleted || null,
-    emoji:h.emoji || "✨",
-    color:/^#[0-9a-f]{6}$/i.test(h.color || "") ? h.color : "#8b7cff"
-  }));
-
-  profile = {
-    nickname:profile.nickname || "",
-    language:["ru","en"].includes(profile.language) ? profile.language : "ru",
-    theme:["old","ocean","forest","sunset","amber","light"].includes(profile.theme) ? profile.theme : "old",
-    sound:profile.sound !== false,
-    avatar:typeof profile.avatar === "string" ? profile.avatar : ""
-  };
-
-  goals = goals.filter(g => g && typeof g.name === "string").slice(0,5);
-  reminders = reminders.filter(r => r && typeof r.time === "string").slice(0,3);
-}
-
-function renderAll() {
-  renderHabits();
-  renderStats();
-  renderCalendar();
-  renderGoals();
-  renderAchievements();
-  renderProfile();
-}
-
-readData();
-updateAchievements();
-translate();
-renderAll();
-
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load",() => {
-    navigator.serviceWorker.register("./service-worker.js")
-      .catch(error => console.error("Service Worker error:",error));
-  });
-}
-
+function openGoalForm(){if(goals.length>=5){showNotice(t("goalLimit"));return;}renderGoalHabitOptions();$("goalForm").reset();$("goalTarget").value="5";renderGoalHabitOptions();closeModal("addModal");openModal("goalModal");}
+$("goalForm").addEventListener("submit",e=>{e.preventDefault();if(goals.length>=5){showNotice(t("goalLimit"));return;}const name=$("goalName").value.trim(),type=$("goalType").value,target=Number($("goalTarget").value),unit=$("goalUnit").value.trim(),period=$("goalPeriod").value,habitId=$("goalHabit").value;if(!name||!Number.isFinite(target)||target<1||target>100000)return;if(type==="habit"&&!activeHabits().some(h=>h.id===habitId)){showNotice(t("noHabitsForGoal"));return;}goals.push({id:uid("goal"),name,type,habitId:type==="habit"?habitId:"",target,unit,period,progress:0,progressByMonth:{}});closeModal("goalModal");playSound();saveData();updateAchievements();renderAll();});
+function makeGoalList(targetId,emptyId){const list=$(targetId);list.innerHTML="";$(emptyId).hidden=goals.length>0;goals.forEach(g=>{const p=goalProgress(g),percent=Math.min(100,Math.round(p.value/p.target*100)),card=document.createElement("div");card.className="goal-card";const head=document.createElement("div");head.className="goal-header";const title=document.createElement("strong");title.textContent=g.name;const del=document.createElement("button");del.className="secondary-button small-button";del.textContent="×";del.setAttribute("aria-label",t("delete"));del.onclick=()=>{if(!confirm(t("deleteConfirm")))return;goals=goals.filter(x=>x.id!==g.id);saveData();renderAll();};head.append(title,del);const count=document.createElement("p");count.textContent=`${t("goalProgress")}: ${p.value} / ${p.target} ${g.unit}`;const track=document.createElement("div");track.className="progress-track";const fill=document.createElement("div");fill.className="progress-fill";fill.style.width=percent+"%";track.append(fill);const status=document.createElement("p");status.textContent=percent>=100?t("complete"):`${t("remaining")}: ${Math.max(0,p.target-p.value)}`;card.append(head,count,track,status);if(g.type==="quantity"&&p.value<p.target){const actions=document.createElement("div");actions.className="goal-actions";const plus=document.createElement("button");plus.className="small-button";plus.textContent=t("increase");plus.onclick=()=>changeGoal(g,1);const minus=document.createElement("button");minus.className="secondary-button small-button";minus.textContent=t("decrease");minus.onclick=()=>changeGoal(g,-1);actions.append(plus,minus);card.append(actions);}list.append(card);});}
+function changeGoal(g,delta){if(g.period==="month"){const k=monthKey(new Date());g.progressByMonth[k]=Math.max(0,(Number(g.progressByMonth[k])||0)+delta);}else g.progress=Math.max(0,(Number(g.progress)||0)+delta);if(delta>0)playSound();updateAchievements();saveData();renderAll();}
+function renderGoals(){makeGoalList("goalList","emptyGoals");makeGoalList("profileGoalList","profileEmptyGoals");$("profileGoalCount").textContent=`${goals.length} / 5`;}
+function renderAchievements(){const list=$("achievementList");list.innerHTML="";const n=achievementDefs.filter(a=>achievements.includes(a[0])).length;$("achievementCount").textContent=`${n} / ${achievementDefs.length}`;$("achievementBar").style.width=n/achievementDefs.length*100+"%";achievementDefs.forEach(a=>{const card=document.createElement("div");card.className="achievement-card"+(achievements.includes(a[0])?"":" locked");const icon=document.createElement("span");icon.className="achievement-icon";icon.textContent=a[1];const txt=document.createElement("div"),title=document.createElement("strong"),desc=document.createElement("p"),status=document.createElement("span");title.textContent=t(a[2]);desc.textContent=t(a[3]);desc.style.margin="4px 0 0";status.className="badge";status.textContent=achievements.includes(a[0])?"✓":"🔒";txt.append(title,desc);card.append(icon,txt,status);list.append(card);});}
+function renderAvatar(){const area=$("avatarDisplay");area.innerHTML="";if(profile.avatar){const img=document.createElement("img");img.className="profile-avatar";img.src=profile.avatar;img.alt=profile.nickname||"Avatar";area.append(img);}else{const ph=document.createElement("div");ph.className="avatar-placeholder";ph.textContent="👤";area.append(ph);}$("removeAvatar").style.display=profile.avatar?"block":"none";}
+function renderReminderOptions(){const s=$("reminderHabit"),old=s.value;s.innerHTML="";const general=document.createElement("option");general.value="";general.textContent=t("notificationGeneral");s.append(general);activeHabits().forEach(h=>{const o=document.createElement("option");o.value=h.id;o.textContent=h.name;s.append(o);});if([...s.options].some(o=>o.value===old))s.value=old;}
+function renderReminders(){const list=$("reminderList");list.innerHTML="";$("addReminderButton").disabled=reminders.length>=3;if(!reminders.length){const p=document.createElement("p");p.textContent=t("noReminders");list.append(p);}reminders.forEach(r=>{const card=document.createElement("div");card.className="reminder-card";const row=document.createElement("div");row.className="inline-row";const text=document.createElement("div"),title=document.createElement("strong"),desc=document.createElement("p");title.textContent=r.time;const h=habits.find(x=>x.id===r.habitId);desc.textContent=h?h.name:t("notificationGeneral");desc.style.margin="4px 0 0";text.append(title,desc);const controls=document.createElement("div");controls.style.display="flex";controls.style.gap="5px";const toggle=document.createElement("button");toggle.className="secondary-button small-button";toggle.textContent=r.enabled?t("reminderOn"):t("reminderOff");toggle.onclick=()=>{r.enabled=!r.enabled;saveData();renderReminders();};const del=document.createElement("button");del.className="secondary-button small-button";del.textContent="×";del.onclick=()=>{reminders=reminders.filter(x=>x.id!==r.id);saveData();renderReminders();};controls.append(toggle,del);row.append(text,controls);card.append(row);list.append(card);});$("notificationStatus").textContent=!("Notification"in window)?t("notificationsUnsupported"):Notification.permission==="granted"?t("notificationsGranted"):Notification.permission==="denied"?t("notificationsDenied"):(profile.language==="ru"?"Браузер может запросить разрешение при добавлении напоминания.":"The browser may request permission when adding a reminder.");}
+function renderProfile(){ $("nickname").value=profile.nickname;$("language").value=profile.language;$("themeSelect").value=profile.theme;$("soundToggle").checked=profile.sound;renderAvatar();renderReminderOptions();renderReminders(); }
+function renderAll(){renderHabits();renderStats();renderCalendar();renderGoals();renderAchievements();renderProfile();}
+$("quickAdd").onclick=()=>openModal("addModal");$("chooseHabitAdd").onclick=()=>openHabitForm();$("chooseGoalAdd").onclick=openGoalForm;$("cancelAdd").onclick=()=>closeModal("addModal");$("cancelHabit").onclick=()=>closeModal("habitModal");$("cancelGoal").onclick=()=>closeModal("goalModal");$("quickAddGoal").onclick=openGoalForm;$("profileAddGoal").onclick=openGoalForm;$("openGoals").onclick=()=>{$("goalsQuickPanel").hidden=false;renderGoals();};$("closeGoals").onclick=()=>{$("goalsQuickPanel").hidden=true;};
+$("prevMonth").onclick=()=>{shownMonth=new Date(shownMonth.getFullYear(),shownMonth.getMonth()-1,1);renderCalendar();};$("nextMonth").onclick=()=>{shownMonth=new Date(shownMonth.getFullYear(),shownMonth.getMonth()+1,1);renderCalendar();};
+document.querySelectorAll(".nav-button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));document.querySelectorAll(".nav-button").forEach(n=>n.classList.remove("active"));$("page-"+b.dataset.page).classList.add("active");b.classList.add("active");window.scrollTo(0,0);}));
+$("saveProfile").onclick=()=>{profile.nickname=$("nickname").value.trim();profile.language=$("language").value;profile.theme=$("themeSelect").value;profile.sound=$("soundToggle").checked;saveData();translate();renderAll();$("profileMessage").textContent=t("profileSaved");};
+$("language").onchange=()=>{profile.language=$("language").value;saveData();translate();renderAll();};
+$("themeSelect").onchange=()=>{profile.theme=$("themeSelect").value;applyTheme();saveData();};
+$("soundToggle").onchange=()=>{profile.sound=$("soundToggle").checked;saveData();if(profile.sound)playSound();};
+$("chooseAvatar").onclick=()=>$("avatarInput").click();
+$("avatarInput").onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;if(!f.type.startsWith("image/")){showNotice(profile.language==="ru"?"Выбери изображение.":"Choose an image.");return;}const reader=new FileReader();reader.onload=()=>{const img=new Image();img.onload=()=>{try{const scale=Math.min(1,1000/Math.max(img.width,img.height)),canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);profile.avatar=canvas.toDataURL("image/jpeg",.86);saveData();renderAvatar();showNotice(profile.language==="ru"?"Фото сохранено без обрезки.":"Photo saved without cropping.");}catch{showNotice(profile.language==="ru"?"Не удалось сохранить фото. Попробуй изображение поменьше.":"Could not save photo. Try a smaller image.");}};img.onerror=()=>showNotice(profile.language==="ru"?"Не удалось открыть изображение.":"Could not open image.");img.src=reader.result;};reader.readAsDataURL(f);e.target.value="";};
+$("removeAvatar").onclick=()=>{profile.avatar="";saveData();renderAvatar();};
+$("reminderForm").addEventListener("submit",async e=>{e.preventDefault();if(reminders.length>=3){showNotice(t("reminderLimit"));return;}if("Notification"in window&&Notification.permission==="default"){try{await Notification.requestPermission();}catch{}}reminders.push({id:uid("reminder"),time:$("reminderTime").value,habitId:$("reminderHabit").value,enabled:true,lastFired:""});saveData();renderReminders();showNotice(t("reminderSaved"));});
+async function checkReminders(){if(!reminders.length)return;const n=new Date(),time=`${String(n.getHours()).padStart(2,"0")}:${String(n.getMinutes()).padStart(2,"0")}`,today=todayKey();for(const r of reminders){if(!r.enabled||r.time!==time||r.lastFired===today)continue;r.lastFired=today;const h=habits.find(x=>x.id===r.habitId),body=h?h.name:t("notificationGeneral");if("Notification"in window&&Notification.permission==="granted"){try{const reg="serviceWorker"in navigator?await navigator.serviceWorker.getRegistration():null;if(reg&&reg.showNotification)await reg.showNotification("Habit Tracker",{body,icon:"./icon.svg"});else new Notification("Habit Tracker",{body});}catch{showNotice(body);}}else showNotice(body);saveData();}}
+function exportBackup(){const data={app:"Habit Tracker",version:5,exportedAt:new Date().toISOString(),habits,history,profile,goals,reminders,achievements};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=`habit-tracker-backup-${todayKey()}.json`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);showNotice(t("backupSaved"));}
+$("exportButton").onclick=exportBackup;$("importButton").onclick=()=>$("importInput").click();
+$("importInput").onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d||!Array.isArray(d.habits)||!d.history||typeof d.history!=="object")throw Error("bad backup");if(!confirm(profile.language==="ru"?"Заменить текущие данные данными из копии?":"Replace current data with backup?"))return;habits=d.habits.filter(h=>h&&typeof h.name==="string").map(h=>({id:h.id||uid("habit"),name:h.name,created:h.created||todayKey(),deleted:h.deleted||null,emoji:h.emoji||"✨",color:/^#[0-9a-f]{6}$/i.test(h.color||"")?h.color:"#7fd69b"}));history=d.history;profile={...profile,...(d.profile||{})};profile.language=["ru","en"].includes(profile.language)?profile.language:"ru";profile.theme=["forest","amber","ocean"].includes(profile.theme)?profile.theme:"forest";profile.sound=profile.sound!==false;profile.avatar=typeof profile.avatar==="string"?profile.avatar:"";goals=(Array.isArray(d.goals)?d.goals:[]).filter(g=>g&&typeof g.name==="string").slice(0,5);reminders=(Array.isArray(d.reminders)?d.reminders:[]).filter(x=>x&&typeof x.time==="string").slice(0,3);achievements=Array.isArray(d.achievements)?d.achievements:[];updateAchievements();saveData();translate();renderAll();showNotice(t("backupRestored"));}catch{showNotice(t("backupError"));}finally{e.target.value="";}};r.readAsText(f);};
+readData();updateAchievements();translate();renderAll();
+if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(e=>console.error("Service Worker error:",e)));
 setInterval(checkReminders,15000);
 </script>
 </body>
