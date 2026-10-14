@@ -8,6 +8,41 @@
 <link rel="manifest" href="./manifest.json">
 <title>Habit Tracker</title>
 <style>
+:root {
+  --bg: #f5f5ed;
+  --card: #fffef9;
+  --text: #29382f;
+  --muted: #7b897d;
+  --accent: #78977b;
+  --accent-light: #e1ebe0;
+  --border: #e4e7dc;
+  --shadow: 0 4px 18px rgba(48, 68, 48, 0.06);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+button {
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+.card,
+.habit-card,
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+
 :root{--bg:#101114;--panel:#202127;--input:#292a32;--text:#f5f5f5;--muted:#a5a5ad;--accent:#8b7cff;--border:#383941}
 *{box-sizing:border-box}
 body{margin:0;padding:20px 16px 100px;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
