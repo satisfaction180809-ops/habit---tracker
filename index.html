@@ -1,81 +1,858 @@
-on { flex:1; }
-.choice-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
-.choice-grid button { min-height:58px; }
-hr { border:0; border-top:1px solid var(--border); margin:16px 0; }
-@media(max-width:380px) {
-  body { padding-left:8px; padding-right:8px; }
-  h1 { font-size:23px; }
-  .habit-item { gap:6px; padding:8px; }
-  .habit-actions button { padding:7px 6px; }
-  .form-grid { grid-template-columns:1fr; }
-}
-</style>
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f1fc">
+  <meta name="description" content="Твой личный трекер привычек и саморазвития">
+  <link rel="manifest" href="./manifest.json">
+  <title>Daily Bloom</title>
+
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f3fb;
+      --surface: #ffffff;
+      --text: #29243a;
+      --muted: #827b91;
+      --accent: #8b72cb;
+      --accent-soft: #eee7fc;
+      --border: #e9e3f2;
+      --danger: #c65d71;
+      --shadow: 0 8px 28px #38265c0b;
+    }
+
+    [data-theme="pink"] {
+      --bg: #fff3f6;
+      --surface: #ffffff;
+      --text: #442a35;
+      --muted: #967985;
+      --accent: #d77b9c;
+      --accent-soft: #fce4ed;
+      --border: #f2dce5;
+    }
+
+    [data-theme="mint"] {
+      --bg: #f0f8f4;
+      --surface: #ffffff;
+      --text: #243b31;
+      --muted: #758b7e;
+      --accent: #549e7c;
+      --accent-soft: #dff2e7;
+      --border: #dcebe2;
+    }
+
+    [data-theme="blue"] {
+      --bg: #f0f5fc;
+      --surface: #ffffff;
+      --text: #26354b;
+      --muted: #78879c;
+      --accent: #638fce;
+      --accent-soft: #e1ecfc;
+      --border: #dce6f5;
+    }
+
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17151e;
+      --surface: #24212e;
+      --text: #f2edf9;
+      --muted: #aaa1ba;
+      --accent: #b39ae9;
+      --accent-soft: #39304d;
+      --border: #3b3548;
+      --danger: #f18a9b;
+      --shadow: 0 8px 28px #00000020;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      transition: background .2s, color .2s;
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .app {
+      width: min(1100px, 100%);
+      margin: auto;
+      padding: 24px 18px 48px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .logo {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: var(--accent-soft);
+      font-size: 25px;
+    }
+
+    h1, h2, p { margin-top: 0; }
+    h1 { font-size: 22px; margin-bottom: 3px; }
+    h2 { font-size: 18px; margin-bottom: 7px; }
+    .subtitle, .muted { color: var(--muted); }
+    .subtitle { font-size: 13px; margin: 0; }
+
+    .theme-control {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px;
+      max-width: 145px;
+    }
+
+    .welcome { margin-bottom: 20px; }
+    .welcome h2 { font-size: 25px; }
+    .welcome p { color: var(--muted); margin-bottom: 0; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(260px, .8fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .column { display: grid; gap: 18px; min-width: 0; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+
+    .card-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .card-heading h2 { margin: 0; }
+
+    .pill {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-radius: 30px;
+      padding: 6px 10px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .progress-track {
+      height: 9px;
+      background: var(--accent-soft);
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 15px 0 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      background: var(--accent);
+      border-radius: inherit;
+      transition: width .2s;
+    }
+
+    .progress-caption {
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .habit-list { display: grid; gap: 10px; }
+
+    .habit {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      min-width: 0;
+    }
+
+    .habit-check {
+      flex: 0 0 27px;
+      width: 27px;
+      height: 27px;
+      padding: 0;
+      border-radius: 9px;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+    }
+
+    .habit-check.done {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .habit-info { flex: 1; min-width: 0; }
+    .habit-name { font-size: 14px; overflow-wrap: anywhere; }
+    .habit.completed .habit-name {
+      color: var(--muted);
+      text-decoration: line-through;
+    }
+
+    .habit-category {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .delete-btn {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      padding: 8px;
+      border-radius: 9px;
+    }
+
+    .delete-btn:hover { color: var(--danger); }
+
+    .add-form {
+      display: flex;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    input, .category-select {
+      min-width: 0;
+      width: 100%;
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      outline: none;
+    }
+
+    input:focus, .category-select:focus {
+      border-color: var(--accent);
+    }
+
+    .primary-btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 15px;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .primary-btn:active, .habit-check:active {
+      transform: scale(.97);
+    }
+
+    .empty {
+      text-align: center;
+      padding: 24px 10px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .step-number {
+      font-size: clamp(32px, 7vw, 43px);
+      font-weight: 750;
+      letter-spacing: -1.5px;
+      margin: 12px 0 5px;
+    }
+
+    .step-note {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat {
+      background: var(--bg);
+      padding: 15px;
+      border-radius: 15px;
+    }
+
+    .stat-value { font-size: 24px; font-weight: 700; }
+    .stat-label { color: var(--muted); font-size: 12px; margin-top: 4px; }
+
+    .settings-label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .sound-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .toggle {
+      width: 46px;
+      height: 27px;
+      border: 0;
+      border-radius: 30px;
+      background: var(--border);
+      padding: 3px;
+      flex-shrink: 0;
+    }
+
+    .toggle::after {
+      content: "";
+      display: block;
+      width: 21px;
+      height: 21px;
+      background: var(--surface);
+      border-radius: 50%;
+      transition: transform .2s;
+    }
+
+    .toggle[aria-checked="true"] {
+      background: var(--accent);
+    }
+
+    .toggle[aria-checked="true"]::after {
+      transform: translateX(19px);
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 28px;
+    }
+
+    @media (max-width: 720px) {
+      .app { padding: 18px 13px 35px; }
+      .grid { grid-template-columns: 1fr; }
+      header { margin-bottom: 24px; }
+      .card { padding: 17px; border-radius: 19px; }
+      .welcome h2 { font-size: 23px; }
+    }
+
+    @media (max-width: 380px) {
+      .theme-control { max-width: 120px; font-size: 12px; }
+      .add-form { flex-wrap: wrap; }
+      .add-form .primary-btn { width: 100%; }
+    }
+  </style>
 </head>
+
 <body>
-<main>
-<section id="page-habits" class="page active">
-  <div class="inline-row">
-    <div><h1 data-i18n="habitsTitle">Мои привычки</h1><p data-i18n="tagline">Маленькие действия. Регулярный прогресс.</p></div>
-    <button id="quickAdd" type="button" aria-label="Добавить" style="font-size:25px;padding:5px 15px;border-radius:13px">+</button>
-  </div>
-  <div class="card">
-    <p data-i18n="todayProgress">Выполнено сегодня</p>
-    <div class="big-number" id="todayCount">0 / 0</div>
-    <div class="progress-track"><div id="todayBar" class="progress-fill"></div></div>
-    <p id="todayPercent">0%</p><p id="streakSummary"></p>
-  </div>
-  <div class="inline-row">
-    <h2 data-i18n="habitsToday">Сегодня</h2>
-    <button id="openGoals" class="secondary-button small-button" type="button" data-i18n="goalsButton">Цели</button>
-  </div>
-  <ul id="habitList" class="habit-list"></ul>
-  <p id="emptyHabits" class="muted" data-i18n="emptyHabits">Пока нет привычек. Нажми +, чтобы добавить первую.</p>
-  <div id="goalsQuickPanel" hidden>
-    <div class="inline-row"><h2 data-i18n="goalsTitle">Цели</h2><button id="closeGoals" class="secondary-button small-button" type="button">×</button></div>
-    <button id="quickAddGoal" class="primary-button" type="button" data-i18n="newGoal">Новая цель</button>
-    <div id="goalList"></div><p id="emptyGoals" class="muted" data-i18n="emptyGoals">Целей пока нет.</p>
-  </div>
-</section>
+  <main class="app">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">🌱</div>
+        <div>
+          <h1>Daily Bloom</h1>
+          <p class="subtitle">Расти в своём темпе</p>
+        </div>
+      </div>
 
-<section id="page-calendar" class="page">
-  <h1 data-i18n="calendarTitle">Календарь</h1><p data-i18n="calendarSubtitle">Выбирай дату и смотри результаты.</p>
-  <div class="card">
-    <div class="calendar-head"><button id="prevMonth" class="secondary-button" type="button">‹</button><strong id="monthLabel"></strong><button id="nextMonth" class="secondary-button" type="button">›</button></div>
-    <div id="weekdays" class="calendar-grid"></div><div id="calendarGrid" class="calendar-grid"></div>
-    <p data-i18n="calendarLegend">Цветные дни показывают выполнение привычек.</p>
-  </div>
-  <div class="card"><h2 id="selectedDateTitle"></h2><div class="big-number" id="selectedDateCount">0 / 0</div><div class="progress-track"><div id="selectedDateBar" class="progress-fill"></div></div><div id="selectedDateHabits"></div></div>
-</section>
+      <select id="themeSelect" class="theme-control"
+        aria-label="Тема оформления">
+        <option value="violet">💜 Фиолетовая</option>
+        <option value="pink">🌸 Розовая</option>
+        <option value="mint">🌿 Мятная</option>
+        <option value="blue">🩵 Голубая</option>
+        <option value="dark">🌙 Тёмная</option>
+      </select>
+    </header>
 
-<section id="page-stats" class="page">
-  <h1 data-i18n="statsTitle">Статистика</h1><p data-i18n="statsSubtitle">Следи за своим прогрессом.</p>
-  <div class="stat-grid">
-    <div class="stat-box"><p data-i18n="weekRate">За 7 дней</p><div class="big-number" id="weekRate">0%</div><div class="progress-track"><div id="weekBar" class="progress-fill"></div></div></div>
-    <div class="stat-box"><p data-i18n="monthRate">За 30 дней</p><div class="big-number" id="monthRate">0%</div><div class="progress-track"><div id="monthBar" class="progress-fill"></div></div></div>
-    <div class="stat-box"><p data-i18n="currentStreak">Текущая серия</p><div class="big-number" id="currentStreak">0</div><small data-i18n="daysUnit">дней</small></div>
-    <div class="stat-box"><p data-i18n="bestStreak">Лучшая серия</p><div class="big-number" id="bestStreak">0</div><small data-i18n="daysUnit">дней</small></div>
-  </div>
-  <div class="card"><p data-i18n="weeklyChart">Результаты за 7 дней</p><div id="weeklyChart" class="chart"></div></div>
-  <div class="card"><p data-i18n="monthlyChart">Результаты за 30 дней</p><div id="monthlyChart" class="chart monthly-chart"></div></div>
-  <div class="card"><h2 data-i18n="weeklyReport">Отчёт за неделю</h2><p data-i18n="totalDone">Всего выполнений</p><div class="big-number" id="totalDone">0</div><p data-i18n="productiveDay">Самый продуктивный день</p><div class="big-number" id="productiveDay">—</div><p data-i18n="weekComparison">Сравнение с прошлой неделей</p><div class="big-number" id="weekComparison">—</div></div>
-</section>
+    <section class="welcome">
+      <h2>Новый день, новые возможности ☀️</h2>
+      <p id="dateText">Твой прогресс начинается с маленьких шагов.</p>
+    </section>
 
-<section id="page-profile" class="page">
-  <h1 data-i18n="profileTitle">Профиль</h1><p data-i18n="profileSubtitle">Настрой приложение под себя.</p>
-  <div class="card">
-    <div id="avatarDisplay"></div><input type="file" id="avatarInput" accept="image/*">
-    <button id="chooseAvatar" class="secondary-button primary-button" type="button" data-i18n="chooseAvatar">Выбрать фото</button>
-    <button id="removeAvatar" class="secondary-button primary-button" type="button" data-i18n="removeAvatar">Убрать фото</button>
-    <div class="field"><label for="nickname" data-i18n="nickname">Твоё имя</label><input id="nickname" maxlength="30" placeholder="Alex"></div>
-    <div class="field"><label for="language" data-i18n="language">Язык</label><select id="language"><option value="ru">Русский</option><option value="en">English</option></select></div>
-    <div class="field"><label for="themeSelect" data-i18n="theme">Тема</label><select id="themeSelect"><option value="forest" data-i18n="themeForest">Тёмно-зелёная</option><option value="amber" data-i18n="themeAmber">Янтарная</option><option value="ocean" data-i18n="themeOcean">Океан</option></select></div>
-    <div class="inline-row"><label for="soundToggle" data-i18n="sound">Звуки</label><input id="soundToggle" type="checkbox" checked></div>
-    <button id="saveProfile" class="primary-button" type="button" data-i18n="saveProfile">Сохранить профиль</button><p id="profileMessage" role="status"></p>
-    <div class="stat-grid"><div class="stat-box"><p data-i18n="activeHabits">Привычки</p><div class="big-number" id="profileHabitCount">0 / 10</div></div><div class="stat-box"><p data-i18n="activeGoals">Цели</p><div class="big-number" id="profileGoalCount">0 / 5</div></div></div>
-    <details><summary data-i18n="achievementsTitle">Достижения</summary><p data-i18n="unlockedAchievements">Открыто достижений</p><div class="big-number" id="achievementCount">0 / 10</div><div class="progress-track"><div id="achievementBar" class="progress-fill"></div></div><div id="achievementList"></div></details>
-    <details><summary data-i18n="goalsTitle">Цели</summary><button id="profileAddGoal" class="primary-button" type="button" data-i18n="newGoal">Новая цель</button><div id="profileGoalList"></div><p id="profileEmptyGoals" class="muted" data-i18n="emptyGoals">Целей пока нет.</p></details>
-    <details><summary data-i18n="remindersTitle">Напоминания</summary><p data-i18n="remindersDescription">До 3 напоминаний в день.</p>
-      <form id="reminderForm"><div class="field"><label for="reminderTime" data-i18n="reminderTime">Время</label><input id="reminderTime" type="time" required value="18:00"></div><div class="field"><label for="reminderHabit" data-i18n="reminderHabit">Привычка</label><select id="reminderHabit"></select></div><button class="primary-button" id="addReminderButton" type="submit" data-i18n="addReminder">Добавить напоминание</button></form>
-      <div id="reminderList"></div><p id="notificationStatus" class="muted"></p>
-    </details>
-    <detai
+    <div class="grid">
+      <div class="column">
+        <section class="card">
+          <div class="card-heading">
+            <h2>Мои привычки</h2>
+            <span class="pill" id="habitCount">0 привычек</span>
+          </div>
+
+          <div class="progress-track" role="progressbar"
+            aria-label="Прогресс привычек"
+            aria-valuemin="0" aria-valuemax="100"
+            aria-valuenow="0" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+
+          <div class="progress-caption">
+            <span id="progressText">Начни с одной привычки</span>
+            <span id="progressPercent">0%</span>
+          </div>
+
+          <div class="habit-list" id="habitList"
+            style="margin-top: 17px"></div>
+
+          <form id="addForm" class="add-form">
+            <input id="habitInput" maxlength="70"
+              placeholder="Например, читать 15 минут"
+              aria-label="Название новой привычки" required>
+            <button class="primary-btn" type="submit">Добавить</button>
+          </form>
+
+          <div style="margin-top:10px">
+            <select id="categorySelect" class="category-select"
+              aria-label="Категория новой привычки">
+              <option value="Личное развитие">📚 Личное развитие</option>
+              <option value="Здоровье">🌿 Здоровье</option>
+              <option value="Спорт">🏃 Спорт</option>
+              <option value="Учёба">🎓 Учёба</option>
+              <option value="Другое">✨ Другое</option>
+            </select>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-heading">
+            <h2>Сегодня</h2>
+            <span class="pill">Сводка</span>
+          </div>
+          <div class="stat-row">
+            <div class="stat">
+              <div class="stat-value" id="doneStat">0</div>
+              <div class="stat-label">Выполнено привычек</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value" id="rateStat">0%</div>
+              <div class="stat-label">Прогресс за день</div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="column">
+        <section class="card">
+          <div class="card-heading">
+            <h2>Мои шаги</h2>
+            <span class="pill">Активность</span>
+          </div>
+
+          <div class="step-number" id="stepNumber">Не подключено</div>
+          <div class="step-note" id="stepStatus">
+            Шагомер пока не подключён. Это не реальные данные.
+          </div>
+
+          <div class="progress-track">
+            <div class="progress-fill" id="stepFill"></div>
+          </div>
+
+          <div class="progress-caption">
+            <span>Дневная цель</span>
+            <span id="stepGoalText">8 000 шагов</span>
+          </div>
+
+          <p class="step-note" style="margin:14px 0 0">
+            Для реального подсчёта потребуется мобильная интеграция
+            с Apple Health или Health Connect.
+          </p>
+        </section>
+
+        <section class="card">
+          <div class="card-heading">
+            <h2>Настройки</h2>
+          </div>
+
+          <div class="sound-row">
+            <div>
+              <div>Звуки интерфейса</div>
+              <div class="step-note">Короткий звук при выполнении</div>
+            </div>
+            <button id="soundToggle" class="toggle"
+              type="button" role="switch" aria-checked="false"
+              aria-label="Включить или выключить звуки"></button>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Маленький совет 🌱</h2>
+          <p class="step-note" style="margin:10px 0 0">
+            Не стремись сделать всё идеально. Регулярные небольшие
+            действия полезнее огромных планов, которые так и остаются
+            планами.
+          </p>
+        </section>
+      </div>
+    </div>
+
+    <footer>Daily Bloom · Твой путь, твой темп</footer>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const $ = id => document.getElementById(id);
+      const KEYS = {
+        habits: "habits",
+        date: "db_current_date",
+        history: "db_history_v1",
+        theme: "db_theme_v1",
+        sound: "db_sound_v1"
+      };
+
+      function readJSON(key, fallback) {
+        try {
+          const value = localStorage.getItem(key);
+          return value === null ? fallback : JSON.parse(value);
+        } catch (error) {
+          console.error("Не удалось прочитать данные:", key, error);
+          return fallback;
+        }
+      }
+
+      function saveJSON(key, value) {
+        try {
+          localStorage.setItem(key, JSON.stringify(value));
+          return true;
+        } catch (error) {
+          alert("Не удалось сохранить данные. Возможно, хранилище заполнено.");
+          console.error(error);
+          return false;
+        }
+      }
+
+      function todayKey() {
+        const d = new Date();
+        return [
+          d.getFullYear(),
+          String(d.getMonth() + 1).padStart(2, "0"),
+          String(d.getDate()).padStart(2, "0")
+        ].join("-");
+      }
+
+      function createId() {
+        return Date.now().toString(36) +
+          Math.random().toString(36).slice(2, 8);
+      }
+
+      let habits = readJSON(KEYS.habits, []);
+      if (!Array.isArray(habits)) habits = [];
+
+      // Поддерживаем привычки из предыдущей версии.
+      habits = habits.map(h => ({
+        id: h.id || createId(),
+        name: String(h.name || "Моя привычка"),
+        category: h.category || "Личное развитие",
+        done: Boolean(h.done)
+      }));
+
+      let history = readJSON(KEYS.history, {});
+      if (!history || typeof history !== "object" ||
+          Array.isArray(history)) history = {};
+
+      let currentDate = todayKey();
+      let soundOn = readJSON(KEYS.sound, false) === true;
+      let audioContext = null;
+
+      // Переносим выполненные сегодня привычки из старой версии
+      // в новую историю один раз при первом запуске.
+      if (!history[currentDate]) {
+        history[currentDate] = {};
+        habits.forEach(h => {
+          if (h.done) history[currentDate][h.id] = true;
+        });
+        saveJSON(KEYS.history, history);
+      }
+
+      function syncToday() {
+        const now = todayKey();
+        if (now === currentDate) return;
+
+        currentDate = now;
+        habits.forEach(h => {
+          h.done = Boolean(history[currentDate]?.[h.id]);
+        });
+        persistHabits();
+        render();
+      }
+
+      function persistHabits() {
+        saveJSON(KEYS.habits, habits);
+      }
+
+      function isDone(habit) {
+        return Boolean(history[currentDate]?.[habit.id]);
+      }
+
+      function playSound() {
+        if (!soundOn) return;
+
+        try {
+          const AudioCtx = window.AudioContext ||
+            window.webkitAudioContext;
+          if (!AudioCtx) return;
+
+          audioContext = audioContext || new AudioCtx();
+          if (audioContext.state === "suspended") {
+            audioContext.resume();
+          }
+
+          const oscillator = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+
+          oscillator.type = "sine";
+          oscillator.frequency.value = 660;
+          gain.gain.setValueAtTime(0.07, audioContext.currentTime);
+          gain.gain.exponentialRampToValueAtTime(
+            0.001, audioContext.currentTime + 0.12
+          );
+
+          oscillator.connect(gain);
+          gain.connect(audioContext.destination);
+          oscillator.start();
+          oscillator.stop(audioContext.currentTime + 0.12);
+        } catch (error) {
+          console.warn("Звук недоступен", error);
+        }
+      }
+
+      function render() {
+        const list = $("habitList");
+        list.replaceChildren();
+
+        const doneCount = habits.filter(isDone).length;
+        const total = habits.length;
+        const percent = total ? Math.round(doneCount / total * 100) : 0;
+
+        $("habitCount").textContent =
+          total + " " + plural(total, "привычка", "привычки", "привычек");
+        $("progressFill").style.width = percent + "%";
+        $("progressPercent").textContent = percent + "%";
+        $("progressBar").setAttribute("aria-valuenow", String(percent));
+        $("progressText").textContent = total
+          ? `Выполнено ${doneCount} из ${total}`
+          : "Добавь первую привычку";
+        $("doneStat").textContent = doneCount;
+        $("rateStat").textContent = percent + "%";
+
+        if (!total) {
+          const empty = document.createElement("div");
+          empty.className = "empty";
+          empty.textContent =
+            "Здесь пока пусто. Добавь привычку, с которой хочешь начать 🌱";
+          list.append(empty);
+        }
+
+        habits.forEach(habit => {
+          const done = isDone(habit);
+
+          const row = document.createElement("div");
+          row.className = "habit" + (done ? " completed" : "");
+
+          const check = document.createElement("button");
+          check.type = "button";
+          check.className = "habit-check" + (done ? " done" : "");
+          check.textContent = done ? "✓" : "";
+          check.setAttribute("aria-pressed", String(done));
+          check.setAttribute(
+            "aria-label",
+            (done ? "Отметить невыполненной: " :
+              "Отметить выполненной: ") + habit.name
+          );
+          check.addEventListener("click", () => toggleHabit(habit.id));
+
+          const info = document.createElement("div");
+          info.className = "habit-info";
+
+          const name = document.createElement("div");
+          name.className = "habit-name";
+          name.textContent = habit.name;
+
+          const category = document.createElement("div");
+          category.className = "habit-category";
+          category.textContent = habit.category;
+
+          info.append(name, category);
+
+          const del = document.createElement("button");
+          del.type = "button";
+          del.className = "delete-btn";
+          del.textContent = "✕";
+          del.setAttribute("aria-label", "Удалить привычку " + habit.name);
+          del.addEventListener("click", () => deleteHabit(habit.id));
+
+          row.append(check, info, del);
+          list.append(row);
+        });
+      }
+
+      function plural(n, one, few, many) {
+        const n10 = n % 10;
+        const n100 = n % 100;
+        if (n10 === 1 && n100 !== 11) return one;
+        if (n10 >= 2 && n10 <= 4 &&
+            !(n100 >= 12 && n100 <= 14)) return few;
+        return many;
+      }
+
+      function toggleHabit(id) {
+        syncToday();
+
+        const habit = habits.find(h => h.id === id);
+        if (!habit) return;
+
+        if (!history[currentDate]) history[currentDate] = {};
+        const newDone = !isDone(habit);
+
+        if (newDone) {
+          history[currentDate][id] = true;
+        } else {
+          delete history[currentDate][id];
+        }
+
+        habit.done = newDone;
+
+        if (saveJSON(KEYS.history, history)) {
+          persistHabits();
+          playSound();
+          render();
+        }
+      }
+
+      function deleteHabit(id) {
+        const habit = habits.find(h => h.id === id);
+        if (!habit) return;
+
+        if (!confirm(`Удалить привычку «${habit.name}»?`)) return;
+
+        habits = habits.filter(h => h.id !== id);
+        // Историю прошлых дней сохраняем.
+        persistHabits();
+        render();
+      }
+
+      $("addForm").addEventListener("submit", event => {
+        event.preventDefault();
+
+        const name = $("habitInput").value.trim();
+        if (!name) return;
+
+        const habit = {
+          id: createId(),
+          name,
+          category: $("categorySelect").value,
+          done: false
+        };
+
+        habits.push(habit);
+        persistHabits();
+        $("habitInput").value = "";
+        render();
+      });
+
+      const themeSelect = $("themeSelect");
+      const allowedThemes = ["violet", "pink", "mint", "blue", "dark"];
+
+      function applyTheme(theme) {
+        if (!allowedThemes.includes(theme)) theme = "violet";
+
+        if (theme === "violet") {
+          document.documentElement.removeAttribute("data-theme");
+        } else {
+          document.documentElement.setAttribute("data-theme", theme);
+        }
+
+        themeSelect.value = theme;
+
+        const colors = {
+          violet: "#f5f1fc",
+          pink: "#fff3f6",
+          mint: "#f0f8f4",
+          blue: "#f0f5fc",
+          dark: "#17151e"
+        };
+
+        document.querySelector('meta[name="theme-color"]')
+          .setAttribute("content", colors[theme]);
+
+        saveJSON(KEYS.theme, theme);
+      }
+
+      themeSelect.addEventListener("change", () => {
+        applyTheme(themeSelect.value);
+      });
+
+      $("soundToggle").setAttribute("aria-checked", String(soundOn));
+      $("soundToggle").addEventListener("click", () => {
+        soundOn = !soundOn;
+        saveJSON(KEYS.sound, soundOn);
+        $("soundToggle").setAttribute("aria-checked", String(soundOn));
+        if (soundOn) playSound();
+      });
+
+      const savedTheme = readJSON(KEYS.theme, "violet");
+      applyTheme(savedTheme);
+
+      const date = new Date();
+      $("dateText").textContent = date.toLocaleDateString("ru-RU", {
+        weekday: "long",
+        day: "numeric",
+        month: "long"
+      });
+
+      habits.forEach(h => {
+        h.done = Boolean(history[currentDate]?.[h.id]);
+      });
+
+      persistHabits();
+      render();
+
+      // Обновляем дату при возвращении на страницу.
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) syncToday();
+      });
+
+      if ("serviceWorker" in navigator && location.protocol !== "file:") {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("./service-worker.js")
+            .catch(error => console.warn("Service Worker:", error));
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
